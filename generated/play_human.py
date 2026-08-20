@@ -4,6 +4,7 @@ from dominion.structure.game import Game
 from dominion.cards.cardtypekind import CardTypeKind
 
 from demo import snapshot, report_diff, CARD_DESCRIPTIONS, play_turn
+from dominion.rl.state import capture_initial_pile_counts
 
 STOP = object()
 
@@ -95,6 +96,8 @@ def main():
     human.choose_pile_fn = human_choose_pile
     ai.choose_cards_fn = ai.ai_choose_cards
     ai.choose_pile_fn = ai.ai_choose_pile
+    ai.choose_action_fn = ai.ai_choose_action
+    ai.choose_buy_fn = ai.ai_choose_buy
 
     print("=== Welcome to Dominion! You are Player 0, playing against the AI (Player 1). ===")
 
@@ -118,6 +121,7 @@ def main():
 
     print(f"Your starting hand: {[c.name for c in human.hand.cards]}")
 
+    initial_pile_counts = capture_initial_pile_counts(game.supply)
     round_num = 0
     while not game.is_over():
         round_num += 1
@@ -126,7 +130,7 @@ def main():
         if game.is_over():
             break
         print("\n  --- AI (Player 1)'s turn ---")
-        play_turn(ai, 1, game, hidden)
+        play_turn(ai, 1, game, round_num, initial_pile_counts, hidden=hidden)
 
     print("\n=== GAME OVER ===")
     human_score = human.calculate_score()

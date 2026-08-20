@@ -33,6 +33,13 @@ real hooks is a prerequisite for everything below.
 Computed over everything a player owns: `deck + hand + discardPile +
 playArea`.
 
+**Kingdom-dependent exception:** `deck_strength`'s `w_gain` weighting (see
+formula below) and the Gardens computed-value check (Section 2) both need
+to know which Victory cards are in the active kingdom — i.e. `game.supply`
+— not just the player's own zones. Both should call the same single
+kingdom-lookup helper (e.g. "is there a count-scoring Victory pile in
+supply") rather than duplicating that detection logic.
+
 | Field | Computation |
 |---|---|
 | `size` | total owned card count |
@@ -41,10 +48,15 @@ playArea`.
 | `card_draw_per_turn` | **surplus only**, baseline 0 (game already grants flat 5-card draw). Output of the same chain simulation. |
 | `money_generated_per_turn` | coins from treasures + coin-actions actually played within the same chain simulation. |
 | `playable_cards_ratio` | `(Action + Treasure card count) / total cards` |
-| `upgrade_ability` | `(Mine + Remodel count / size) × (1 − playable_cards_ratio)` — capacity × room-to-improve. Static, no simulation. |
+| `upgrade_ability` | `(Σ trash_from_hand where grants_replacement=1) / size × (1 − playable_cards_ratio)` — capacity × room-to-improve. Static, no simulation. Generalized by feature (was hardcoded to Mine/Remodel by name — now picks up any future replace-trasher, e.g. Artisan, automatically.) |
+| `thinning_ability` | `(Σ trash_from_hand where grants_replacement=0) / size × (1 − playable_cards_ratio)` — pure deck-shrinking capacity (Chapel, Moneylender, Sentry's trash option), same room-to-improve weighting, same static/no-simulation treatment as `upgrade_ability`. Note: Moneylender's `trash_from_hand` is small and self-limiting (Copper-only, capped by remaining Coppers) — its main value is money, already captured in `money_generated_per_turn`, so it naturally contributes little here rather than needing a manual carve-out. |
+| `attack_pressure_generated` | **surplus only**, from the same chain simulation — sum of `attack_magnitude` (Section 2) over Attack cards actually played in that pass, parallel to how `money_generated_per_turn` sums coins from the same pass. |
+| `defense_density` | `Reaction card count / size` — static, no simulation, same pattern as `upgrade_ability`. |
+| `gain_potential` | **surplus only**, from the same chain simulation — `buys_granted_per_turn` (surplus Buys beyond the baseline 1) + `cards_gained_per_turn` (sum of `cards_gained` over gain-cards played in the same pass). Represents expected deck-size growth this turn from any source, not just normal buys. |
 
 **Chain simulation** (produces `actions_per_turn`, `card_draw_per_turn`,
-`money_generated_per_turn` together, not independently):
+`money_generated_per_turn`, `buys_granted_per_turn`, `cards_gained_per_turn`
+together, not independently):
 1. Sample/expect a 5-card hand from deck composition.
 2. Always play all playable actions — never stop early, never hold back.
 3. At each step, play the currently-playable Action card with the highest
@@ -54,8 +66,11 @@ playArea`.
    later action cards once actions hit 0). This is a greedy value-ordered
    resolution, not full expectation-over-all-orderings.
 4. Newly drawn cards mid-chain become eligible in the same pass.
-5. Track running actions-remaining, cards-drawn, coins-accumulated.
-6. Outputs = surplus values beyond the 0/5 baseline.
+5. Track running actions-remaining, cards-drawn, coins-accumulated,
+   buys-accumulated, and cards-gained (Workshop/Artisan/Bureaucrat/Bandit
+   -style direct gains resolved mid-chain, same as any other Action
+   effect).
+6. Outputs = surplus values beyond the 0/5/1 baseline (actions/draw/buys).
 
 `avg_card_cost`'s role in any downstream formula is **deferred** — track it,
 don't weight it yet.
@@ -65,22 +80,46 @@ Computed per player at each decision point.
 
 | Field | Computation |
 |---|---|
-| `estimated_turns_remaining` | `min` over: Province-pile depletion estimate, 3-pile depletion estimate. Each = `pile.count / avg purchases of that pile per round across all players`. Matches `Game.is_over()`'s real end conditions. |
+| `estimated_turns_remaining` | `min` over: Province-pile depletion estimate, 3-pile depletion estimate. Each = `pile.count / avg purchases of that pile per round across all players`. Matches `Game.is_over()`'s real end conditions. **Turn-1 edge case:** with zero rounds played, the denominator is undefined (0/0) — seed with a heuristic prior (e.g. assume 1 purchase/round/player) until real purchase data accumulates, rather than dividing by zero on the very first decision point. |
 | `deck_strength` | see formula below |
 | `score_gap` (Current Ranking) | `self.calculate_score() − best opponent's calculate_score()`. Negative = behind, positive = ahead, 0 = tied with closest rival. (Known limitation: doesn't distinguish mid-pack positional battles — accepted for v1.) |
-| `current_priority` | enum: `Actions \| Draw \| Money \| Shedding \| VPs` — decision tree below |
+| `current_priority` | enum: `Actions \| Draw \| Money \| Shedding \| VPs \| Growth \| Attack \| Defense` — decision tree below |
 
 **Deck Strength formula:**
 ```
 deck_strength = w * (actions_per_turn + draw_per_turn + money_per_turn)
+              + w_attack * attack_pressure_generated
+              + w_defense * defense_density
               + w_upgrade(turns_remaining) * upgrade_ability
+              + w_thin(turns_remaining) * thinning_ability
+              + w_gain(turns_remaining, kingdom) * gain_potential
               # playable_cards_ratio: minor/secondary term, exact role TBD
               # avg_card_cost: deferred, no weight yet
 ```
 - `w` — equal weight across the three chain-simulation outputs.
+- `w_attack` / `w_defense` — new tunable constants, same category as `w`.
+  Deliberately self-referential like the rest of `deck_strength`: they
+  score your deck's offense/defense *potential*, not resolved outcomes
+  against real opponents (that remains `score_gap`'s job, Section 4). No
+  opponent simulation, no extra pass — `attack_pressure_generated`
+  piggybacks on the chain simulation already running;
+  `defense_density` is a free ratio like `upgrade_ability`.
 - `w_upgrade(turns_remaining)` — scales **up** early game, decays toward 0
   late game (no time left to capitalize on trashing). Start with:
   `w_upgrade = w_slow_max * min(1, turns_remaining / T_reference)`.
+- `w_thin(turns_remaining)` — same curve shape and rationale as
+  `w_upgrade` (a leaner deck only pays off if there's time left to draw
+  through it more often); separate tunable constant since pure thinning
+  and replace-curation may not deserve equal weight.
+- `w_gain(turns_remaining, kingdom)` — **not** a flat constant like the
+  others. Unlike attack/defense/upgrade/thinning, raw deck growth isn't
+  unconditionally good — outside a count-scoring kingdom it just dilutes
+  `playable_cards_ratio`, and a flat weight risks the policy learning
+  "gaining cards is always good" and hoarding junk with extra Buys even
+  when there's no payoff for it (a reward-hacking failure mode, see
+  Section 5). Scale `w_gain` by whether a count-scoring Victory card
+  (Gardens, for now) is actually present in the episode's kingdom — near 0
+  otherwise, meaningful only when it can convert into VP.
 - Compute `estimated_turns_remaining` **before** `deck_strength` (dependency
   order).
 
@@ -88,17 +127,36 @@ deck_strength = w * (actions_per_turn + draw_per_turn + money_per_turn)
 first, since a great engine with no turns left is irrelevant):
 1. **VPs** — if `estimated_turns_remaining` is low → endgame, prioritize VP
    buys regardless of anything else.
-2. **Actions** — if `actions_per_turn` (surplus) ≈ 0 and playable action
+2. **Growth** — kingdom-gated (see the kingdom-dependent exception above):
+   only evaluated when a count-scoring Victory card (Gardens) is in the
+   active kingdom. If so, and `gain_potential` capacity is available →
+   prioritize buying/gaining anything over quality, since Gardens converts
+   raw card count directly to VP. Skipped entirely in kingdoms without a
+   count-scoring Victory card.
+3. **Defense** — if the kingdom contains Attack cards and this player's
+   `defense_density` is low relative to visible/likely attack exposure →
+   prioritize a Reaction card (Moat) before it's needed; reacting after
+   the first hit is too late.
+4. **Actions** — if `actions_per_turn` (surplus) ≈ 0 and playable action
    cards are regularly stranded in hand → buy support/action cards.
-3. **Draw** — if `card_draw_per_turn` (surplus) is low relative to `size`
+5. **Draw** — if `card_draw_per_turn` (surplus) is low relative to `size`
    → deck is diluting faster than it draws through itself.
-4. **Money** — if `money_per_turn` can't reliably reach next VP tier cost
+6. **Money** — if `money_per_turn` can't reliably reach next VP tier cost
    (Duchy=5, Province=8) → buy treasure/coin generation.
-5. **Shedding** — if `playable_cards_ratio` is low/dropping and
-   `upgrade_ability` > 0 → prioritize trashing.
+7. **Attack** — if `attack_pressure_generated` ≈ 0, an affordable Attack
+   card is available, and the engine (Actions/Draw/Money) is otherwise
+   healthy → prioritize an Attack card for opponent-facing tempo.
+8. **Shedding** — if `playable_cards_ratio` is low/dropping and
+   (`upgrade_ability` > 0 or `thinning_ability` > 0) → prioritize trashing.
 
 Thresholds are tunable; this tree is a v1 heuristic, can later be
-replaced/complemented by the learned policy itself.
+replaced/complemented by the learned policy itself. The three new
+categories (`Growth`/`Attack`/`Defense`) exist so the heuristic baseline
+(Section 5) and Play Style Profiles (Section 8) can represent
+Gardens-engine and attack/defense-oriented strategies — the RL policy
+itself already learns these from `deck_strength`'s new terms regardless of
+whether this tree captures them, since that's dense reward shaping, not
+policy logic.
 
 ---
 
@@ -113,8 +171,12 @@ identity. This is what lets the policy generalize across random kingdoms.
 | `cost` | `Card.cost` | ÷8 |
 | `is_action` / `is_treasure` / `is_victory` / `is_curse` / `is_attack` / `is_reaction` | `CardTypeKind in types` | binary each |
 | `coin_value` | `TreasureFacet.coinValue` (0 if N/A) | ÷3 |
-| `victory_points` | `VictoryFacet.victoryPoints` (0 if N/A) | ÷6 |
+| `victory_points` | `VictoryFacet.victoryPoints` (0 if N/A) — see computed-value note below | ÷6 |
 | `actions_granted` / `draw_granted` / `buys_granted` | net effect when played, 0 for non-Actions | ÷ small constant |
+| `cards_gained` | net cards gained directly when played, outside the buy phase (Workshop, Artisan's gain-to-hand, Bureaucrat's Silver, Bandit's Gold), 0 for non-gainers | ÷ small constant, same treatment as `actions_granted` |
+| `attack_magnitude` | hand-tuned per-card constant estimating opponent-facing disruption (Curse-gain, forced-discard, trash/topdeck, etc.), 0 for non-Attack cards | ÷ small constant, same treatment as `actions_granted` |
+| `trash_from_hand` | net cards trashed **from this card's own owner's cards** when played (hand-tuned constant for variable effects, e.g. Chapel's up-to-4), 0 for non-trashers. Despite the name, applies regardless of source zone — hand (Chapel, Moneylender) or revealed (Sentry) — per Section 3's `candidate_source`; it never includes opponent-facing trash effects (e.g. Bandit trashing an opponent's Treasure), which are `attack_magnitude`'s job instead. | ÷ small constant, same treatment as `actions_granted` |
+| `grants_replacement` | binary: does the trash effect also gain a card back (Mine/Remodel-style curation) vs. pure removal with nothing gained (Chapel/Moneylender-style thinning)? 0 for non-trashers | binary |
 | `has_choice_effect` | binary: does playing this trigger any of the 4 decision hooks? | binary |
 
 For **piles** (Supply), also attach a `count` field (copies remaining) —
@@ -122,12 +184,21 @@ dynamic per turn, feeds pile-race awareness (`estimated_turns_remaining`,
 `VPs` priority).
 
 **Consistency note:** DeckState's `avg_card_cost`, `playable_cards_ratio`,
-and `upgrade_ability` are aggregates over this same per-card feature
-vector — one source of truth for "what a card does," feeding both
-deck-level stats and the action space.
+`upgrade_ability`, `thinning_ability`, `attack_pressure_generated`,
+`defense_density`, and `gain_potential` are all aggregates over this same
+per-card feature vector — one source of truth for "what a card does,"
+feeding both deck-level stats and the action space.
 
 Normalization constants (÷8, ÷3, ÷6) are base-game maximums; revisit only
 if higher-value cards get added later.
+
+**Computed-value cards note:** `victory_points` above assumes a static
+`VictoryFacet.victoryPoints` field. Gardens (Section 7, Tier 6) breaks that
+assumption — its VP is `floor(total_owned_cards / 10)`, dependent on the
+owning deck's `size`, not the card in isolation. Every call site that reads
+`victory_points` — this feature vector *and* `calculate_score()` in
+`player.py` — needs a computed-value branch, not just `VictoryFacet`
+itself, or Gardens silently scores 0 wherever that branch is missing.
 
 ---
 
@@ -166,7 +237,13 @@ Treasure-playing (`play_treasures()`) is automatic, not a decision point.
 `choose_cards_fn`'s candidates aren't always the hand — extend with a
 `candidate_source` tag: `hand`, `discard` (Harbinger), `revealed` (Vassal /
 Library / Sentry, 1–2 top-of-deck cards). Same multi-binary+commit shape,
-just pointed at a different zone.
+just pointed at a different zone. **Clarification:** this is not a new
+parameter on `choose_cards_fn`'s signature — the caller (`play_action_card`)
+already builds the `candidates` list from whichever zone before invoking
+the hook (see Mine/Remodel pulling from `hand` today). `candidate_source`
+just names which zone the caller pre-selected from, tracked via `context`
+naming/documentation, not a runtime value threaded through the hook call
+itself.
 
 **Sentry's 3-way choice** — decompose into 3 sequential
 `choose_cards_fn` calls over the same 2 revealed cards, no new shape needed:
@@ -197,6 +274,15 @@ R_terminal = sign(final score_gap)       # or scaled by margin — test both
 - Watch for scale mismatch between dense shaped reward and sparse terminal
   reward — likely needs a global scale factor once real training runs
   start.
+- **Performance note:** `Δdeck_strength` needs a full PlayerState
+  computation (including Section 1's chain simulation) before *and* after
+  every `step()`, and Section 3 makes `step()` fire on every atomic
+  card-play/buy, not once per turn — so the chain simulation potentially
+  reruns many times per turn. Profile this before committing to per-step
+  recompute; consider caching or incrementally updating DeckState between
+  steps that don't change deck composition (e.g. consecutive action-phase
+  plays within the same chain) instead of resimulating from scratch each
+  time.
 
 ---
 
@@ -266,7 +352,13 @@ env.step(action)`.
   control to it mid-turn with its own PlayerState/mask; if
   baseline/snapshot-controlled, resolve internally. Reward attribution
   still follows the normal per-seat delta rule. Witch needs no routing —
-  its Curse-gain is fully automatic.
+  its Curse-gain is fully automatic. **This mechanism already exists and
+  works today** — Militia (`player.py`) already calls
+  `other.choose_cards_fn(...)`, the opponent's own hook, not the
+  turn-holder's. Validate the wrapper's "which seat owns the pending
+  decision" logic against Militia (already implemented) before building
+  Bureaucrat/Bandit's routing — lower-risk than proving the mechanism for
+  the first time on brand-new cards.
 - **Nested invocation (Throne Room)** — target-card selection reuses
   `choose_action_fn` unchanged; the environment then invokes that card's
   full effect (including its own decision points) **twice in sequence**, as
@@ -326,7 +418,38 @@ Merchant, Militia, Mine, Remodel.
 **Tier 6 — scoring-only, no action space impact:**
 | Card | Cost | Requirement |
 |---|---|---|
-| Gardens | 4 | `VictoryFacet` needs a computed-value mode: `victoryPoints = floor(total_owned_cards / 10)` at `calculate_score()` time, not a static field |
+| Gardens | 4 | `VictoryFacet` needs a computed-value mode: `victoryPoints = floor(total_owned_cards / 10)`, evaluated at both `calculate_score()` time **and** wherever Section 2's `victory_points` feature is read — not a static field, and not only `calculate_score()` (see Section 2's computed-value note) |
+
+**Feature Vector constants for the 16 new cards** (Section 2's
+`attack_magnitude` / `trash_from_hand` / `grants_replacement` /
+`cards_gained` — the fields that need a hand-tuned per-card value, not
+derived from anything already in the game model. All other Section 2
+fields — `cost`, `is_*`, `coin_value`, `victory_points`,
+`actions_granted`/`draw_granted`/`buys_granted` — follow directly from
+each card's rules text above and aren't repeated here):
+
+| Card | `attack_magnitude` | `trash_from_hand` | `grants_replacement` | `cards_gained` |
+|---|---|---|---|---|
+| Poacher | 0 | 0 | 0 | 0 |
+| Festival | 0 | 0 | 0 | 0 |
+| Laboratory | 0 | 0 | 0 | 0 |
+| Council Room | 0 | 0 | 0 | 0 |
+| Moneylender | 0 | 1 (Copper only) | 0 → `thinning_ability` | 0 |
+| Chapel | 0 | 4 (up-to, upper-bound constant) | 0 → `thinning_ability` | 0 |
+| Artisan | 0 | 0 | 0 | 1 (gain-to-hand) |
+| Library | 0 | 0 | 0 | 0 |
+| Harbinger | 0 | 0 | 0 | 0 (relocates an owned card, doesn't add one) |
+| Vassal | 0 | 0 | 0 | 0 |
+| Sentry | 0 | 2 (up-to, revealed not hand — see Section 2 note) | 0 → `thinning_ability` | 0 |
+| Witch | 3 (guaranteed Curse, no Reaction check bypass) | 0 | 0 | 0 |
+| Bureaucrat | 1 (weakest attack — Silver-topdeck opponent counter-play exists) | 0 | 0 | 1 (Silver) |
+| Bandit | 2 (can destroy an opponent's Silver/Gold) | 0 | 0 | 1 (Gold) |
+| Throne Room | 0 | 0 | 0 | 0 (doubles the target card's own tags on re-invocation) |
+| Gardens | N/A — Victory card, not an Action; not part of the action space | | | |
+
+All `attack_magnitude` values above are illustrative starting points, not
+derived — same "start rough, tune during training" treatment as
+`w_upgrade`/`T_reference` elsewhere in this plan.
 
 **Suggested build order:** Tier 1 → Tier 6 (isolated) → Tier 2 → Tier 4
 (proves off-turn routing, needed regardless) → Tier 3 → Tier 5 (last,

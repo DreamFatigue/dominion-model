@@ -1,7 +1,6 @@
-import random
-
 from dominion.structure.game import Game
 from dominion.cards.cardtypekind import CardTypeKind
+from dominion.rl.state import compute_player_state, capture_initial_pile_counts
 
 
 CARD_DESCRIPTIONS = {
@@ -78,8 +77,11 @@ def report_diff(before, after, game, hidden=None):
             print_hand(p, i, hidden)
 
 
-def play_turn(p, idx, game, hidden=None):
-    print(f"  --- Player {idx}'s turn ---")
+def play_turn(p, idx, game, round_num, initial_pile_counts, hidden=None):
+    ps = compute_player_state(p, game.players, game.supply, initial_pile_counts, round_num)
+    p.current_priority = ps.current_priority
+    priority_label = "[hidden]" if (hidden and idx in hidden) else ps.current_priority.value
+    print(f"  --- Player {idx}'s turn --- (priority: {priority_label})")
     print_hand(p, idx, hidden)
 
     # Action phase
@@ -88,7 +90,9 @@ def play_turn(p, idx, game, hidden=None):
         action_cards = [c for c in p.hand.cards if CardTypeKind.Action in c.types]
         if not action_cards:
             break
-        card = action_cards[0]
+        card = p.choose_action_fn(action_cards, "Choose an action card to play", "action_phase")
+        if card is None:
+            break
         description = CARD_DESCRIPTIONS.get(card.name, "")
         before = snapshot(game)
         p.play_action_card(card, game)
@@ -118,11 +122,9 @@ def play_turn(p, idx, game, hidden=None):
                       if pile.count > 0 and pile.cardType.cost <= p.coins]
         if not affordable:
             break
-        action_affordable = [pile for pile in affordable if CardTypeKind.Action in pile.cardType.types]
-        pool = action_affordable if action_affordable else affordable
-        top_cost = max(pile.cardType.cost for pile in pool)
-        tier = [pile for pile in pool if pile.cardType.cost == top_cost]
-        best = random.choice(tier)
+        best = p.choose_buy_fn(affordable, "Choose a pile to buy", "buy_phase")
+        if best is None:
+            break
         p.buy_card(best)
         bought_any = True
         print(f"    [Buy Phase] Bought {best.cardType.name} (coins left: {p.coins}, buys left: {p.buys})")
@@ -146,6 +148,8 @@ def main():
     for p in game.players:
         p.choose_cards_fn = p.ai_choose_cards
         p.choose_pile_fn = p.ai_choose_pile
+        p.choose_action_fn = p.ai_choose_action
+        p.choose_buy_fn = p.ai_choose_buy
 
     print("=== Initial setup ===")
     for i, p in enumerate(game.players):
@@ -154,12 +158,13 @@ def main():
     print("Supply piles:", [(pile.cardType.name, pile.count) for pile in game.supply.piles])
     print("Game over?", game.is_over())
 
+    initial_pile_counts = capture_initial_pile_counts(game.supply)
     round_num = 0
     while not game.is_over() and round_num < 30:
         round_num += 1
         print(f"\n=== Round {round_num} ===")
         for i, p in enumerate(game.players):
-            play_turn(p, i, game)
+            play_turn(p, i, game, round_num, initial_pile_counts)
             if game.is_over():
                 break
 

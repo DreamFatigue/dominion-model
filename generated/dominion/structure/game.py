@@ -18,7 +18,7 @@ class Game:
 		self.supply = Supply()
 		self.trash = Trash()
 
-	def setup(self, num_players):
+	def setup(self, num_players, kingdom_card_names=None):
 		import random
 		
 		def make_treasure(name, cost, value):
@@ -84,9 +84,37 @@ class Game:
 		militia = make_action("Militia", 4, [CardTypeKind.Attack])
 		mine = make_action("Mine", 5)
 		remodel = make_action("Remodel", 4)
-		
-		kingdom_counts = [(village, 10), (smithy, 10), (market, 10), (workshop, 10), (moat, 10),
-		                  (cellar, 10), (merchant, 10), (militia, 10), (mine, 10), (remodel, 10)]
+		poacher = make_action("Poacher", 4)
+		festival = make_action("Festival", 5)
+		laboratory = make_action("Laboratory", 5)
+		council_room = make_action("Council Room", 5)
+		moneylender = make_action("Moneylender", 4)
+		chapel = make_action("Chapel", 2)
+		artisan = make_action("Artisan", 6)
+		library = make_action("Library", 5)
+		harbinger = make_action("Harbinger", 3)
+		vassal = make_action("Vassal", 3)
+		sentry = make_action("Sentry", 5)
+		witch = make_action("Witch", 5, [CardTypeKind.Attack])
+		bureaucrat = make_action("Bureaucrat", 4, [CardTypeKind.Attack])
+		bandit = make_action("Bandit", 5, [CardTypeKind.Attack])
+		throne_room = make_action("Throne Room", 4)
+		# Gardens' real VP is computed dynamically from deck size (see
+		# dominion.rl.card_constants.COMPUTED_VALUE_VICTORY_CARDS) -- the
+		# static victoryPoints=0 here is just a placeholder, never read.
+		gardens = make_victory("Gardens", 4, 0)
+
+		all_kingdom_cards = [village, smithy, market, workshop, moat, cellar, merchant, militia, mine, remodel,
+		                     poacher, festival, laboratory, council_room, moneylender, chapel, artisan, library,
+		                     harbinger, vassal, sentry, witch, bureaucrat, bandit, throne_room, gardens]
+
+		if kingdom_card_names is not None:
+		    by_name = {c.name: c for c in all_kingdom_cards}
+		    chosen_cards = [by_name[n] for n in kingdom_card_names]
+		else:
+		    chosen_cards = random.sample(all_kingdom_cards, 10)
+
+		kingdom_counts = [(card_type, 10) for card_type in chosen_cards]
 		for card_type, count in kingdom_counts:
 		    pile = SupplyPile()
 		    pile.cardType = card_type
