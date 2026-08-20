@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:style="http://www.eclipse.org/papyrus/infra/gmfdiag/style" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_FZYSsJxmEfG4RLJYBu0Xag" type="PapyrusUMLClassDiagram" name="DominionModelBDD" measurementUnit="Pixel">
+  <styles xmi:type="notation:StringValueStyle" xmi:id="_FZYSsZxmEfG4RLJYBu0Xag" name="diagram_compatibility_version" stringValue="1.4.0"/>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_FZYSspxmEfG4RLJYBu0Xag"/>
+  <styles xmi:type="style:PapyrusDiagramStyle" xmi:id="_FZYSs5xmEfG4RLJYBu0Xag" diagramKindId="org.eclipse.papyrus.sysml16.diagram.blockdefinition">
+    <owner xmi:type="uml:Model" href="dominion-model.uml#_FPuv0JxYEfGOPOoE5BT8MQ"/>
+  </styles>
+  <element xmi:type="uml:Model" href="dominion-model.uml#_FPuv0JxYEfGOPOoE5BT8MQ"/>
+</notation:Diagram>
