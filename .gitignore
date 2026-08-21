@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 .venv/
+.claude/
+generated/dominion/rl/runs/

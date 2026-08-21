@@ -14,9 +14,11 @@ from .state import Priority
 class PlayStyleLog:
     def __init__(self):
         self.priorities = []
+        self.deck_strengths = []
 
-    def record(self, priority):
+    def record(self, priority, deck_strength=None):
         self.priorities.append(priority)
+        self.deck_strengths.append(deck_strength)
 
     def priority_distribution(self):
         """% of turns per category -- Big-Money-style skews Money/VPs,
@@ -52,10 +54,13 @@ class PlayStyleLog:
         return changes / (len(self.priorities) - 1)
 
     def summary(self):
+        tracked = [d for d in self.deck_strengths if d is not None]
         return {
             "priority_distribution": self.priority_distribution(),
             "vps_transition_turn": self.vps_transition_turn(),
             "vps_transition_fraction": self.vps_transition_fraction(),
             "transition_smoothness": self.transition_smoothness(),
             "turns_logged": len(self.priorities),
+            "deck_strength_trajectory": self.deck_strengths,
+            "final_deck_strength": tracked[-1] if tracked else None,
         }

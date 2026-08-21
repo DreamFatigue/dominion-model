@@ -36,7 +36,7 @@ from .state import compute_player_state, capture_initial_pile_counts, Priority
 from .action_space import (
     compute_hand_slots, assign_pile_slots, pile_slot_mask, decode_pile_choice,
     hand_slot_mask, decode_hand_choice, multi_select_mask, decode_multi_select,
-    PILE_SLOTS,
+    PILE_SLOTS, HAND_SLOTS_MAX,
 )
 from .features import card_feature_vector, pile_feature_vector, FEATURE_DIM
 from .reward import compute_reward
@@ -70,7 +70,7 @@ class DominionEnv(gym.Env):
         self._py_rng = random.Random(seed)
 
         self.observation_space = gym.spaces.Dict({
-            "hand": gym.spaces.Box(low=-1, high=1, shape=(1, FEATURE_DIM), dtype=np.float32),
+            "hand": gym.spaces.Box(low=-1, high=1, shape=(HAND_SLOTS_MAX, FEATURE_DIM), dtype=np.float32),
             "piles": gym.spaces.Box(low=-1, high=1, shape=(PILE_SLOTS, FEATURE_DIM + 1), dtype=np.float32),
             "player_state": gym.spaces.Box(low=-np.inf, high=np.inf, shape=(4,), dtype=np.float32),
         })
@@ -143,7 +143,12 @@ class DominionEnv(gym.Env):
         self._prev_player_state = next_state
 
         terminated = next_request is None
-        info = {"score_gap": next_state.score_gap, "deck_strength": next_state.deck_strength}
+        info = {
+            "score_gap": next_state.score_gap,
+            "deck_strength": next_state.deck_strength,
+            "mask": None,
+            "kind": None,
+        }
         if terminated:
             self._thread.join(timeout=5)
             return self._terminal_obs(), reward, True, False, info
@@ -183,7 +188,7 @@ class DominionEnv(gym.Env):
             p, self.game.players, self.game.supply, self.initial_pile_counts, self.round_num)
         p.current_priority = ps.current_priority
         if p is self.hero:
-            self.play_style_log.record(ps.current_priority)
+            self.play_style_log.record(ps.current_priority, ps.deck_strength)
 
         while p.actions > 0:
             action_cards = [c for c in p.hand.cards if CardTypeKind.Action in c.types]
@@ -210,7 +215,7 @@ class DominionEnv(gym.Env):
         hand = self.hero.hand.cards
         owned = len(hand) + len(self.hero.deck.cards) + len(self.hero.discardPile.cards) + len(self.hero.playArea.cards)
 
-        hand_feats = np.zeros((max(1, min(len(hand), self.hand_slots)), FEATURE_DIM), dtype=np.float32)
+        hand_feats = np.zeros((HAND_SLOTS_MAX, FEATURE_DIM), dtype=np.float32)
         for i, c in enumerate(hand[:self.hand_slots]):
             hand_feats[i] = card_feature_vector(c, owner_card_count=owned)
 
@@ -220,10 +225,17 @@ class DominionEnv(gym.Env):
                 pile_feats[i] = pile_feature_vector(pile, owner_card_count=owned)
 
         ps = self._prev_player_state
+        # estimated_turns_remaining can legitimately be float('inf') (state.py's
+        # "no depletion threat yet" sentinel for untouched piles) -- fine for
+        # the priority-tree comparisons it's used for there, but a raw inf in
+        # an observation vector breaks any numeric consumer (e.g. inf*0=nan
+        # in a linear layer). Clip to a generous-but-finite "plenty of turns
+        # left" ceiling, well above any real game length.
+        turns_remaining_capped = min(ps.estimated_turns_remaining, 100.0)
         player_state_vec = np.array([
             ps.deck_strength,
             ps.score_gap,
-            ps.estimated_turns_remaining,
+            turns_remaining_capped,
             float(list(Priority).index(ps.current_priority)),
         ], dtype=np.float32)
 
@@ -232,8 +244,17 @@ class DominionEnv(gym.Env):
         return obs, mask
 
     def _build_mask(self, request):
+        # Hand-based masks are computed at the real (episode-specific)
+        # self.hand_slots width, then right-padded with False out to the
+        # fixed HAND_SLOTS_MAX -- legality is untouched, only the tensor
+        # envelope around it becomes uniform across every step/episode, which
+        # training needs for batching. STOP (where present) must stay the
+        # true last slot, so it's padded before appending, not after.
+        pad = HAND_SLOTS_MAX - self.hand_slots
         if request.kind == "action":
-            return hand_slot_mask(self.hero.hand.cards, request.candidates, self.hand_slots)
+            mask = hand_slot_mask(self.hero.hand.cards, request.candidates, self.hand_slots, include_stop=False)
+            mask = np.pad(mask, (0, pad), constant_values=False)
+            return np.append(mask, True)  # STOP always legal
         if request.kind == "buy":
             return pile_slot_mask(self.slot_assignment, request.candidates)
         if request.kind == "pile":
@@ -242,7 +263,7 @@ class DominionEnv(gym.Env):
             must_exact = request.count if (request.count is not None and request.count >= 0) else None
             slot_mask, _ = multi_select_mask(self.hero.hand.cards, request.candidates, self.hand_slots,
                                               must_exact_count=must_exact)
-            return slot_mask
+            return np.pad(slot_mask, (0, pad), constant_values=False)
         raise ValueError(request.kind)
 
     def _decode_action(self, request, action):
@@ -257,7 +278,7 @@ class DominionEnv(gym.Env):
 
     def _terminal_obs(self):
         return {
-            "hand": np.zeros((1, FEATURE_DIM), dtype=np.float32),
+            "hand": np.zeros((HAND_SLOTS_MAX, FEATURE_DIM), dtype=np.float32),
             "piles": np.zeros((PILE_SLOTS, FEATURE_DIM + 1), dtype=np.float32),
             "player_state": np.zeros(4, dtype=np.float32),
         }

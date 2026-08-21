@@ -9,9 +9,10 @@ import random
 import numpy as np
 
 PILE_SLOTS = 17  # 7 basic + 10 Kingdom, per the plan.
+HAND_SLOTS_MAX = 60  # fixed padding width for training obs/masks -- see env.py
 
 
-def compute_hand_slots(supply, cap=60):
+def compute_hand_slots(supply, cap=HAND_SLOTS_MAX):
     """Generous fixed cap derived from total supply at setup; unused slots
     are simply masked out. Not meant to be tight, just safely unreachable."""
     return min(sum(p.count for p in supply.piles), cap)
