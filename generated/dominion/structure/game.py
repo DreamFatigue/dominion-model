@@ -1,15 +1,15 @@
 from .player import Player
 from .supply import Supply
-from .supplypile import SupplyPile
 from ..zones.trash import Trash
-from ..zones.deck import Deck
-from ..zones.hand import Hand
-from ..zones.discardpile import DiscardPile
-from ..zones.playarea import PlayArea
 from ..cards.card import Card
 from ..cards.cardtypekind import CardTypeKind
 from ..cards.treasurefacet import TreasureFacet
 from ..cards.victoryfacet import VictoryFacet
+from .supplypile import SupplyPile
+from ..zones.deck import Deck
+from ..zones.hand import Hand
+from ..zones.discardpile import DiscardPile
+from ..zones.playarea import PlayArea
 
 class Game:
 
@@ -18,9 +18,9 @@ class Game:
 		self.supply = Supply()
 		self.trash = Trash()
 
-	def setup(self, num_players, kingdom_card_names=None):
+	def setup(self, num_players):
 		import random
-		
+
 		def make_treasure(name, cost, value):
 		    c = Card()
 		    c.name = name
@@ -108,6 +108,12 @@ class Game:
 		                     poacher, festival, laboratory, council_room, moneylender, chapel, artisan, library,
 		                     harbinger, vassal, sentry, witch, bureaucrat, bandit, throne_room, gardens]
 
+		# Optional, duck-typed like choose_cards_fn/choose_pile_fn -- not a
+		# formal parameter, so setup(num_players)'s existing call sites never
+		# need to change. Set game.kingdom_card_names before calling setup()
+		# to force a specific 10-card kingdom (e.g. one of Section 7's
+		# recommended presets); leave it unset for a random 10-of-26 draw.
+		kingdom_card_names = getattr(self, "kingdom_card_names", None)
 		if kingdom_card_names is not None:
 		    by_name = {c.name: c for c in all_kingdom_cards}
 		    chosen_cards = [by_name[n] for n in kingdom_card_names]

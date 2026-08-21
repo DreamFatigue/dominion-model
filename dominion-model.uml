@@ -108,6 +108,7 @@ return c</body>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_x6mbAVua7dPwatC-NJhf4A" name="Structure">
       <packagedElement xmi:type="uml:Class" xmi:id="_djIVjnlCztUpPVVgfj8sHQ" name="Player">
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_Cx05U3QHSKGvLFmBKF4ylg" importedElement="_wFkAiHOPlb3V4ThmZAl6yg"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_Vnnx0aF2byzy8jLqj4xKQA" name="deck" type="_s12wjtrKijp5JJZYh0SxaQ" aggregation="composite"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_xvwNu6R93V_kO3_7LjXICw" name="hand" type="_GUZ3ZTG7vVXP0BOD63cd7Q" aggregation="composite"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_4_BtrW6MjXIt8nRGG6PKsg" name="discardPile" type="_ahb-e1fIB40_5W24NayBoA" aggregation="composite"/>
@@ -127,6 +128,7 @@ return c</body>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_z8E7ga78131ftCr27O-NVA" name="declineMoatReveal">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
         </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_EA1xciHAS5-fPJsNXEhdTQ" name="current_priority"/>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_9jaTq0-1M4RC3dXjE5LpfQ" name="draw">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_W7e72RQctgfRN8coAZgKnQ" name="n">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
@@ -136,14 +138,32 @@ return c</body>
           <language>Python</language>
           <body>import random
 for _ in range(n):
-    if not self.deck.cards:
-        if not self.discardPile.cards:
-            return
-        self.deck.cards = self.discardPile.cards
-        random.shuffle(self.deck.cards)
-        self.discardPile.cards = []
-    if self.deck.cards:
-        self.hand.cards.append(self.deck.cards.pop())</body>
+	if not self.deck.cards:
+		if not self.discardPile.cards:
+			return
+		self.deck.cards = self.discardPile.cards
+		random.shuffle(self.deck.cards)
+		self.discardPile.cards = []
+	if self.deck.cards:
+		self.hand.cards.append(self.deck.cards.pop())</body>
+        </ownedBehavior>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_fkmcfJeYSayeD7CcWrAHAw" name="_is_junk_to_trash">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_7kV7xnpvQY-T0HL3VYhYRQ" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
+        </ownedOperation>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_vudtdrf_TVaZyyxnbggKEg" name="_is_junk_to_trash" specification="_fkmcfJeYSayeD7CcWrAHAw">
+          <language>Python</language>
+          <body>"""Shared by chapel_trash/sentry_trash. Curses are always junk;
+Estates are junk unless current_priority is Growth (Gardens wants
+total card count, not quality); Coppers are only junk once priority
+has actually shifted to Shedding."""
+from ..rl.state import Priority
+if card.name == "Curse":
+	return True
+if card.name == "Estate":
+	return self.current_priority != Priority.Growth
+if card.name == "Copper":
+	return self.current_priority == Priority.Shedding
+return False</body>
         </ownedBehavior>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_PS9CRJWiNxra3aZHuwLf-A" name="ai_choose_cards">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_bPApZUMvaD7CFBVKLB_RIg" name="candidates" type="_Fynj5aSoWLHppjotMxbJow">
@@ -162,13 +182,61 @@ for _ in range(n):
         </ownedOperation>
         <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Yptr3QRxN6Ke6kFkff2Rzg" name="ai_choose_cards" specification="_PS9CRJWiNxra3aZHuwLf-A">
           <language>Python</language>
-          <body>if context == "cellar_discard":
-    return [c for c in candidates if CardTypeKind.Victory in c.types or CardTypeKind.Curse in c.types]
+          <body>from ..rl.state import Priority
+priority = self.current_priority
+
+if context == "cellar_discard":
+	return [c for c in candidates if CardTypeKind.Victory in c.types or CardTypeKind.Curse in c.types]
 if context in ("mine_trash", "remodel_trash"):
-    return [min(candidates, key=lambda c: c.cost)] if candidates else []
+	return [min(candidates, key=lambda c: c.cost)] if candidates else []
 if context == "militia_discard":
-    sorted_candidates = sorted(candidates, key=lambda c: c.cost)
-    return sorted_candidates[:count]
+	sorted_candidates = sorted(candidates, key=lambda c: c.cost)
+	return sorted_candidates[:count]
+
+if context == "chapel_trash":
+	return [c for c in candidates if self._is_junk_to_trash(c)][:4]
+if context == "poacher_discard":
+	return sorted(candidates, key=lambda c: c.cost)[:count]
+if context == "moneylender_trash":
+	# Always worth it: lose a Copper (worth 1), gain 3 Coins this turn.
+	return candidates[:1]
+if context == "artisan_topdeck":
+	# Keep the best of hand out this turn; put the worst back to draw again later.
+	return [min(candidates, key=lambda c: c.cost)] if candidates else []
+if context == "library_skip":
+	# Skip drawn Actions you can't use this turn anyway, or don't
+	# currently want (priority has shifted off Actions/Draw).
+	if self.actions &lt;= 0 or priority in (Priority.Money, Priority.VPs):
+		return list(candidates)
+	return []
+if context == "harbinger_topdeck":
+	if not candidates:
+		return []
+	best = max(candidates, key=lambda c: c.cost)
+	if best.cost &lt;= 0 and priority != Priority.Money:
+		return []
+	return [best]
+if context == "vassal_play":
+	# A free extra Action play is essentially always worth taking.
+	return list(candidates)
+if context == "sentry_trash":
+	return [c for c in candidates if self._is_junk_to_trash(c)]
+if context == "sentry_discard":
+	return [c for c in candidates if CardTypeKind.Victory in c.types or c.name == "Copper"]
+if context == "sentry_reorder":
+	# Keep whatever's left in its current (post-trash/discard) order.
+	return list(candidates)
+if context == "bureaucrat_topdeck":
+	# Forced choice: minimize the loss by topdecking the cheapest VP.
+	if not candidates:
+		return []
+	return [min(candidates, key=lambda c: c.victoryFacet.victoryPoints if c.victoryFacet else 0)]
+if context == "bandit_trash":
+	# Forced choice: sacrifice the less valuable Treasure.
+	if not candidates:
+		return []
+	return [min(candidates, key=lambda c: c.treasureFacet.coinValue if c.treasureFacet else 0)]
+
 return []</body>
         </ownedBehavior>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_1yCxz1HtHgiy7RKNzZZ9eg" name="ai_choose_pile">
@@ -187,6 +255,45 @@ return []</body>
           <language>Python</language>
           <body>return max(candidates, key=lambda p: p.cardType.cost) if candidates else None</body>
         </ownedBehavior>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_xRUUqk-YQi-flH2pedpb3A" name="ai_choose_action">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_n5GGnj35QviRGXgCbZF6dQ" name="candidates" type="_Fynj5aSoWLHppjotMxbJow">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_n5GGnj35QviRGXgCbZF6dQL" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_n5GGnj35QviRGXgCbZF6dQU" value="*"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_7RtKwqZMS9C275i6m2xb_Q" name="prompt">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_UVCdLikvQPKH0QFN2P8GHg" name="context">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_I8Gjpqv6SJm1nXV9ZYpTog" name="ai_choose_action" specification="_xRUUqk-YQi-flH2pedpb3A">
+          <language>Python</language>
+          <body>return candidates[0] if candidates else None</body>
+        </ownedBehavior>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_MtsNwGBsSIiE8pYqpLtYyw" name="ai_choose_buy">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_fLQgnXQ-QhuurWsNtk1olw" name="candidates" type="_DbQhCcuWNPMEvA06MBVNqg">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_fLQgnXQ-QhuurWsNtk1olwL" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fLQgnXQ-QhuurWsNtk1olwU" value="*"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_dXZqOe2ASdeOyVDClzqkYA" name="prompt">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_n9r1P-3nQwSSUa5RIETMyA" name="context">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UVs4P7ISQnuzlrCZ3WzQ8A" name="ai_choose_buy" specification="_MtsNwGBsSIiE8pYqpLtYyw">
+          <language>Python</language>
+          <body>import random
+if not candidates:
+	return None
+action_affordable = [pile for pile in candidates if CardTypeKind.Action in pile.cardType.types]
+pool = action_affordable if action_affordable else candidates
+top_cost = max(pile.cardType.cost for pile in pool)
+tier = [pile for pile in pool if pile.cardType.cost == top_cost]
+return random.choice(tier)</body>
+        </ownedBehavior>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_ngjGx6lNKNwsCgHHn9FruQ" name="play_action_card">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_eYOeuGnAfsNTXXHqMDgTCw" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_LPIR5Up2Yphg3y4WXfQwXg" name="game"/>
@@ -194,87 +301,315 @@ return []</body>
         <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_fj7i_fLYvf0QbY41dAfK6Q" name="play_action_card" specification="_ngjGx6lNKNwsCgHHn9FruQ">
           <language>Python</language>
           <body>if self.actions &lt;= 0:
-    return False
+	return False
 if card not in self.hand.cards:
-    return False
+	return False
 self.actions -= 1
 self.hand.cards.remove(card)
 self.playArea.cards.append(card)
-
+self._resolve_action_effect(card, game)
+return True</body>
+        </ownedBehavior>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_bfSjlyxiRv6IDWT-11t-nA" name="_reveal_top">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_qzXsCsLHQyqrZRqR4AX5bg" name="n">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_yp9thoNfR9Ky7aApVLkOwQ" name="_reveal_top" specification="_bfSjlyxiRv6IDWT-11t-nA">
+          <language>Python</language>
+          <body>"""Reveal up to n cards off the top of this player's own deck
+(reshuffling discard in as needed), without adding them to hand.
+Used by Vassal/Sentry/Bandit-style effects."""
+import random
+revealed = []
+for _ in range(n):
+	if not self.deck.cards:
+		if not self.discardPile.cards:
+			break
+		self.deck.cards = self.discardPile.cards
+		random.shuffle(self.deck.cards)
+		self.discardPile.cards = []
+	if self.deck.cards:
+		revealed.append(self.deck.cards.pop())
+return revealed</body>
+        </ownedBehavior>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_N-UUeqniS5WGVTeHmrK5GQ" name="_resolve_action_effect">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_RyAskfuDQNOnaiyhD9TsRg" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_8VdEoEe7R-iznGWJnV2D2w" name="game"/>
+        </ownedOperation>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Iej_P7KgSdmyukTIMjq46A" name="_resolve_action_effect" specification="_N-UUeqniS5WGVTeHmrK5GQ">
+          <language>Python</language>
+          <body>"""Just the effect logic, no action-cost/hand-removal bookkeeping,
+so Throne Room / Vassal can invoke a card's effect re-entrantly
+without re-paying its action cost or moving it again."""
 name = card.name
 
 if name == "Village":
-    self.actions += 2
-    self.draw(1)
+	self.actions += 2
+	self.draw(1)
 elif name == "Smithy":
-    self.draw(3)
+	self.draw(3)
 elif name == "Market":
-    self.actions += 1
-    self.buys += 1
-    self.coins += 1
-    self.draw(1)
+	self.actions += 1
+	self.buys += 1
+	self.coins += 1
+	self.draw(1)
 elif name == "Workshop":
-    candidates = game.supply.eligible_piles(4, None)
-    gain_pile = self.choose_pile_fn(candidates, "Workshop: choose a card to gain (to discard)", "workshop_gain")
-    if gain_pile is not None:
-        gained = game.supply.take_from_pile(gain_pile)
-        self.discardPile.cards.append(gained)
+	candidates = game.supply.eligible_piles(4, None)
+	gain_pile = self.choose_pile_fn(candidates, "Workshop: choose a card to gain (to discard)", "workshop_gain")
+	if gain_pile is not None:
+		gained = game.supply.take_from_pile(gain_pile)
+		self.discardPile.cards.append(gained)
 elif name == "Moat":
-    self.draw(2)
+	self.draw(2)
 elif name == "Cellar":
-    self.actions += 1
-    discard_candidates = self.choose_cards_fn(list(self.hand.cards),
-                                               "Cellar: choose any number of cards to discard", "cellar_discard", -1)
-    for c in discard_candidates:
-        self.hand.cards.remove(c)
-        self.discardPile.cards.append(c)
-    self.draw(len(discard_candidates))
+	self.actions += 1
+	discard_candidates = self.choose_cards_fn(list(self.hand.cards),
+	                                           "Cellar: choose any number of cards to discard", "cellar_discard", -1)
+	for c in discard_candidates:
+		self.hand.cards.remove(c)
+		self.discardPile.cards.append(c)
+	self.draw(len(discard_candidates))
 elif name == "Merchant":
-    self.actions += 1
-    self.draw(1)
+	self.actions += 1
+	self.draw(1)
 elif name == "Militia":
-    self.coins += 2
-    for other in game.players:
-        if other is self:
-            continue
-        if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
-            continue
-        excess = len(other.hand.cards) - 3
-        if excess &gt; 0:
-            to_discard = other.choose_cards_fn(list(other.hand.cards),
-                                                "Militia: choose " + str(excess) + " card(s) to discard",
-                                                "militia_discard", excess)
-            for c in to_discard:
-                if c in other.hand.cards:
-                    other.hand.cards.remove(c)
-                    other.discardPile.cards.append(c)
+	self.coins += 2
+	for other in game.players:
+		if other is self:
+			continue
+		if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+			continue
+		excess = len(other.hand.cards) - 3
+		if excess &gt; 0:
+			to_discard = other.choose_cards_fn(list(other.hand.cards),
+			                                    "Militia: choose " + str(excess) + " card(s) to discard",
+			                                    "militia_discard", excess)
+			for c in to_discard:
+				if c in other.hand.cards:
+					other.hand.cards.remove(c)
+					other.discardPile.cards.append(c)
 elif name == "Mine":
-    treasures_in_hand = [c for c in self.hand.cards if CardTypeKind.Treasure in c.types]
-    if treasures_in_hand:
-        chosen = self.choose_cards_fn(treasures_in_hand, "Mine: choose a Treasure to trash", "mine_trash", 1)
-        if chosen:
-            to_trash = chosen[0]
-            candidates = game.supply.eligible_piles(to_trash.cost + 3, CardTypeKind.Treasure)
-            gain_pile = self.choose_pile_fn(candidates, "Mine: choose a Treasure to gain to hand", "mine_gain")
-            if gain_pile is not None:
-                gained = game.supply.take_from_pile(gain_pile)
-                self.hand.cards.remove(to_trash)
-                game.trash.cards.append(to_trash)
-                self.hand.cards.append(gained)
+	treasures_in_hand = [c for c in self.hand.cards if CardTypeKind.Treasure in c.types]
+	if treasures_in_hand:
+		chosen = self.choose_cards_fn(treasures_in_hand, "Mine: choose a Treasure to trash", "mine_trash", 1)
+		if chosen:
+			to_trash = chosen[0]
+			candidates = game.supply.eligible_piles(to_trash.cost + 3, CardTypeKind.Treasure)
+			gain_pile = self.choose_pile_fn(candidates, "Mine: choose a Treasure to gain to hand", "mine_gain")
+			if gain_pile is not None:
+				gained = game.supply.take_from_pile(gain_pile)
+				self.hand.cards.remove(to_trash)
+				game.trash.cards.append(to_trash)
+				self.hand.cards.append(gained)
 elif name == "Remodel":
-    if self.hand.cards:
-        chosen = self.choose_cards_fn(list(self.hand.cards), "Remodel: choose a card to trash", "remodel_trash", 1)
-        if chosen:
-            to_trash = chosen[0]
-            candidates = game.supply.eligible_piles(to_trash.cost + 2, None)
-            gain_pile = self.choose_pile_fn(candidates, "Remodel: choose a card to gain (to discard)", "remodel_gain")
-            if gain_pile is not None:
-                gained = game.supply.take_from_pile(gain_pile)
-                self.hand.cards.remove(to_trash)
-                game.trash.cards.append(to_trash)
-                self.discardPile.cards.append(gained)
-
-return True</body>
+	if self.hand.cards:
+		chosen = self.choose_cards_fn(list(self.hand.cards), "Remodel: choose a card to trash", "remodel_trash", 1)
+		if chosen:
+			to_trash = chosen[0]
+			candidates = game.supply.eligible_piles(to_trash.cost + 2, None)
+			gain_pile = self.choose_pile_fn(candidates, "Remodel: choose a card to gain (to discard)", "remodel_gain")
+			if gain_pile is not None:
+				gained = game.supply.take_from_pile(gain_pile)
+				self.hand.cards.remove(to_trash)
+				game.trash.cards.append(to_trash)
+				self.discardPile.cards.append(gained)
+elif name == "Poacher":
+	self.actions += 1
+	self.coins += 1
+	self.draw(1)
+	empty_piles = sum(1 for pile in game.supply.piles if pile.count &lt;= 0)
+	if empty_piles &gt; 0 and self.hand.cards:
+		n = min(empty_piles, len(self.hand.cards))
+		to_discard = self.choose_cards_fn(list(self.hand.cards),
+		                                   f"Poacher: discard {n} card(s) (one per empty supply pile)",
+		                                   "poacher_discard", n)
+		for c in to_discard:
+			if c in self.hand.cards:
+				self.hand.cards.remove(c)
+				self.discardPile.cards.append(c)
+elif name == "Festival":
+	self.actions += 2
+	self.buys += 1
+	self.coins += 2
+elif name == "Laboratory":
+	self.actions += 1
+	self.draw(2)
+elif name == "Council Room":
+	self.buys += 1
+	self.draw(4)
+	for other in game.players:
+		if other is not self:
+			other.draw(1)
+elif name == "Moneylender":
+	coppers = [c for c in self.hand.cards if c.name == "Copper"]
+	if coppers:
+		chosen = self.choose_cards_fn(coppers, "Moneylender: trash a Copper for +3 Coins?",
+		                               "moneylender_trash", -1)
+		if chosen:
+			to_trash = chosen[0]
+			self.hand.cards.remove(to_trash)
+			game.trash.cards.append(to_trash)
+			self.coins += 3
+elif name == "Chapel":
+	if self.hand.cards:
+		chosen = self.choose_cards_fn(list(self.hand.cards), "Chapel: trash up to 4 cards",
+		                               "chapel_trash", -1)
+		for c in chosen[:4]:
+			if c in self.hand.cards:
+				self.hand.cards.remove(c)
+				game.trash.cards.append(c)
+elif name == "Artisan":
+	gain_candidates = game.supply.eligible_piles(5, None)
+	gain_pile = self.choose_pile_fn(gain_candidates, "Artisan: choose a card to gain (to hand)", "artisan_gain")
+	if gain_pile is not None:
+		gained = game.supply.take_from_pile(gain_pile)
+		self.hand.cards.append(gained)
+	if self.hand.cards:
+		chosen = self.choose_cards_fn(list(self.hand.cards),
+		                               "Artisan: put a card from hand onto your deck", "artisan_topdeck", 1)
+		if chosen:
+			to_topdeck = chosen[0]
+			self.hand.cards.remove(to_topdeck)
+			self.deck.cards.append(to_topdeck)
+elif name == "Library":
+	import random
+	while len(self.hand.cards) &lt; 7:
+		if not self.deck.cards:
+			if not self.discardPile.cards:
+				break
+			self.deck.cards = self.discardPile.cards
+			random.shuffle(self.deck.cards)
+			self.discardPile.cards = []
+		drawn = self.deck.cards.pop()
+		if CardTypeKind.Action in drawn.types:
+			skip = self.choose_cards_fn([drawn], "Library: skip this drawn Action card?", "library_skip", -1)
+			if skip and drawn in skip:
+				self.discardPile.cards.append(drawn)
+				continue
+		self.hand.cards.append(drawn)
+elif name == "Harbinger":
+	self.actions += 1
+	self.draw(1)
+	if self.discardPile.cards:
+		chosen = self.choose_cards_fn(list(self.discardPile.cards),
+		                               "Harbinger: put a card from discard onto your deck?",
+		                               "harbinger_topdeck", -1)
+		if chosen:
+			to_topdeck = chosen[0]
+			if to_topdeck in self.discardPile.cards:
+				self.discardPile.cards.remove(to_topdeck)
+				self.deck.cards.append(to_topdeck)
+elif name == "Vassal":
+	self.coins += 2
+	revealed = self._reveal_top(1)
+	if revealed:
+		top = revealed[0]
+		if CardTypeKind.Action in top.types:
+			chosen = self.choose_cards_fn([top], "Vassal: play the revealed Action card?", "vassal_play", -1)
+			if chosen and top in chosen:
+				self.playArea.cards.append(top)
+				self._resolve_action_effect(top, game)
+			else:
+				self.discardPile.cards.append(top)
+		else:
+			self.discardPile.cards.append(top)
+elif name == "Sentry":
+	self.actions += 1
+	self.draw(1)
+	revealed = self._reveal_top(2)
+	if revealed:
+		to_trash = self.choose_cards_fn(list(revealed), "Sentry: trash any of the revealed cards",
+		                                 "sentry_trash", -1)
+		for c in to_trash:
+			if c in revealed:
+				revealed.remove(c)
+				game.trash.cards.append(c)
+	if revealed:
+		to_discard = self.choose_cards_fn(list(revealed),
+		                                   "Sentry: discard any of the remaining revealed cards",
+		                                   "sentry_discard", -1)
+		for c in to_discard:
+			if c in revealed:
+				revealed.remove(c)
+				self.discardPile.cards.append(c)
+	if revealed:
+		order = self.choose_cards_fn(list(revealed),
+		                              "Sentry: choose card(s) to keep on top (rest go beneath, in order)",
+		                              "sentry_reorder", -1)
+		chosen_ids = {id(c) for c in order} if order else set()
+		top_group = [c for c in order if id(c) in chosen_ids] if order else []
+		rest_group = [c for c in revealed if id(c) not in chosen_ids]
+		for c in rest_group:
+			self.deck.cards.append(c)
+		for c in top_group:
+			self.deck.cards.append(c)
+elif name == "Witch":
+	self.draw(2)
+	for other in game.players:
+		if other is self:
+			continue
+		if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+			continue
+		curse_piles = [pl for pl in game.supply.piles if pl.cardType.name == "Curse" and pl.count &gt; 0]
+		if curse_piles:
+			gained = game.supply.take_from_pile(curse_piles[0])
+			other.discardPile.cards.append(gained)
+elif name == "Bureaucrat":
+	silver_piles = [pl for pl in game.supply.piles if pl.cardType.name == "Silver" and pl.count &gt; 0]
+	if silver_piles:
+		gained = game.supply.take_from_pile(silver_piles[0])
+		self.deck.cards.append(gained)
+	for other in game.players:
+		if other is self:
+			continue
+		if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+			continue
+		victory_cards = [c for c in other.hand.cards if CardTypeKind.Victory in c.types]
+		if victory_cards:
+			chosen = other.choose_cards_fn(victory_cards,
+			                                "Bureaucrat: choose a Victory card to put on top of your deck",
+			                                "bureaucrat_topdeck", 1)
+			if chosen:
+				to_topdeck = chosen[0]
+				if to_topdeck in other.hand.cards:
+					other.hand.cards.remove(to_topdeck)
+					other.deck.cards.append(to_topdeck)
+elif name == "Bandit":
+	gold_piles = [pl for pl in game.supply.piles if pl.cardType.name == "Gold" and pl.count &gt; 0]
+	if gold_piles:
+		gained = game.supply.take_from_pile(gold_piles[0])
+		self.discardPile.cards.append(gained)
+	for other in game.players:
+		if other is self:
+			continue
+		if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+			continue
+		revealed = other._reveal_top(2)
+		eligible = [c for c in revealed if CardTypeKind.Treasure in c.types and c.name != "Copper"]
+		to_trash = None
+		if len(eligible) == 1:
+			to_trash = eligible[0]
+		elif len(eligible) &gt; 1:
+			chosen = other.choose_cards_fn(eligible, "Bandit: choose a Treasure to trash", "bandit_trash", 1)
+			if chosen:
+				to_trash = chosen[0]
+		for c in revealed:
+			if c is to_trash:
+				game.trash.cards.append(c)
+			else:
+				other.discardPile.cards.append(c)
+elif name == "Throne Room":
+	action_cards_in_hand = [c for c in self.hand.cards if CardTypeKind.Action in c.types]
+	if action_cards_in_hand:
+		target = self.choose_action_fn(action_cards_in_hand,
+		                                "Throne Room: choose an action card to play twice",
+		                                "throne_room_target")
+		if target is not None and target in self.hand.cards:
+			self.hand.cards.remove(target)
+			self.playArea.cards.append(target)
+			self._resolve_action_effect(target, game)
+			self._resolve_action_effect(target, game)</body>
         </ownedBehavior>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_j7Rz4BZfa80-rWDdGeZ50g" name="play_treasures"/>
         <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_suQI_xxtqx1RtgS7bgKJwA" name="play_treasures" specification="_j7Rz4BZfa80-rWDdGeZ50g">
@@ -282,13 +617,13 @@ return True</body>
           <body>treasures = [c for c in self.hand.cards if CardTypeKind.Treasure in c.types]
 merchants_in_play = sum(1 for c in self.playArea.cards if c.name == "Merchant")
 for card in treasures:
-    if card.treasureFacet is not None:
-        self.coins += card.treasureFacet.coinValue
-    if card.name == "Silver" and not self.silverPlayedThisTurn:
-        self.coins += merchants_in_play
-        self.silverPlayedThisTurn = True
-    self.hand.cards.remove(card)
-    self.playArea.cards.append(card)
+	if card.treasureFacet is not None:
+		self.coins += card.treasureFacet.coinValue
+	if card.name == "Silver" and not self.silverPlayedThisTurn:
+		self.coins += merchants_in_play
+		self.silverPlayedThisTurn = True
+	self.hand.cards.remove(card)
+	self.playArea.cards.append(card)
 return len(treasures)</body>
         </ownedBehavior>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_MuvAuQ4zHH7ZgVjGo6aQHQ" name="buy_card">
@@ -297,11 +632,11 @@ return len(treasures)</body>
         <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_CPxJos8f_e_tPMHh1D6X4g" name="buy_card" specification="_MuvAuQ4zHH7ZgVjGo6aQHQ">
           <language>Python</language>
           <body>if self.buys &lt;= 0:
-    return False
+	return False
 if pile.count &lt;= 0:
-    return False
+	return False
 if self.coins &lt; pile.cardType.cost:
-    return False
+	return False
 self.buys -= 1
 self.coins -= pile.cardType.cost
 pile.count -= 1
@@ -324,11 +659,17 @@ self.silverPlayedThisTurn = False</body>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_aNfj3Kkt9QdzoIw5aJRFRA" name="calculate_score"/>
         <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_MqpeBFQKTiK1pl5Yj2yJkg" name="calculate_score" specification="_aNfj3Kkt9QdzoIw5aJRFRA">
           <language>Python</language>
-          <body>total = 0
-for zone in (self.deck.cards, self.hand.cards, self.discardPile.cards, self.playArea.cards):
-    for c in zone:
-        if CardTypeKind.Victory in c.types or CardTypeKind.Curse in c.types:
-            total += c.victoryFacet.victoryPoints
+          <body>from ..rl.card_constants import COMPUTED_VALUE_VICTORY_CARDS
+all_cards = self.deck.cards + self.hand.cards + self.discardPile.cards + self.playArea.cards
+owned_card_count = len(all_cards)
+total = 0
+for c in all_cards:
+	if CardTypeKind.Victory in c.types or CardTypeKind.Curse in c.types:
+		computed = COMPUTED_VALUE_VICTORY_CARDS.get(c.name)
+		if computed is not None:
+			total += computed(owned_card_count)
+		else:
+			total += c.victoryFacet.victoryPoints
 return total</body>
         </ownedBehavior>
       </packagedElement>
@@ -383,6 +724,15 @@ return pile.cardType.clone()</body>
         </ownedBehavior>
       </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_fafwyzeBq2t5E502cWikzQ" name="Game">
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_naWZ8t0-S4yjEpxaAK1HDQ" importedElement="_Fynj5aSoWLHppjotMxbJow"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_hw7EcQ3GQhymIpbHAbfELQ" importedElement="_wFkAiHOPlb3V4ThmZAl6yg"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_sIul9zxvQm6Q1XHvQpfw3Q" importedElement="_RUuVfBSdZzB6WO5g4SKf1Q"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_93NeTRPUQ3OacMoNvwZphg" importedElement="_v2r_z3vMRwYxbZeNt9ZZew"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_yBYi45IHRV-snhvxDO6U4A" importedElement="_DbQhCcuWNPMEvA06MBVNqg"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_Ta9wQJ76QMuEkwJaKGwAMw" importedElement="_s12wjtrKijp5JJZYh0SxaQ"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_QlumqmiCTC2T0ptSIoM2kw" importedElement="_GUZ3ZTG7vVXP0BOD63cd7Q"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_m5bMYItVSpe1uwb0Q9GIIA" importedElement="_ahb-e1fIB40_5W24NayBoA"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_35YIjnU4Q0aDsVIQBwG-bA" importedElement="_Z9xafxONEplNp9awDSbIww"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_u3ItQ9bEwS9j2fWw5CL9kA" name="players" type="_djIVjnlCztUpPVVgfj8sHQ" aggregation="composite">
           <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pmdSUPkxWBrOErlypjHReQ" value="2"/>
           <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_gSRCtost5yYfoANthQQLsw" value="4"/>
@@ -461,9 +811,43 @@ merchant = make_action("Merchant", 3)
 militia = make_action("Militia", 4, [CardTypeKind.Attack])
 mine = make_action("Mine", 5)
 remodel = make_action("Remodel", 4)
+poacher = make_action("Poacher", 4)
+festival = make_action("Festival", 5)
+laboratory = make_action("Laboratory", 5)
+council_room = make_action("Council Room", 5)
+moneylender = make_action("Moneylender", 4)
+chapel = make_action("Chapel", 2)
+artisan = make_action("Artisan", 6)
+library = make_action("Library", 5)
+harbinger = make_action("Harbinger", 3)
+vassal = make_action("Vassal", 3)
+sentry = make_action("Sentry", 5)
+witch = make_action("Witch", 5, [CardTypeKind.Attack])
+bureaucrat = make_action("Bureaucrat", 4, [CardTypeKind.Attack])
+bandit = make_action("Bandit", 5, [CardTypeKind.Attack])
+throne_room = make_action("Throne Room", 4)
+# Gardens' real VP is computed dynamically from deck size (see
+# dominion.rl.card_constants.COMPUTED_VALUE_VICTORY_CARDS) -- the
+# static victoryPoints=0 here is just a placeholder, never read.
+gardens = make_victory("Gardens", 4, 0)
 
-kingdom_counts = [(village, 10), (smithy, 10), (market, 10), (workshop, 10), (moat, 10),
-                  (cellar, 10), (merchant, 10), (militia, 10), (mine, 10), (remodel, 10)]
+all_kingdom_cards = [village, smithy, market, workshop, moat, cellar, merchant, militia, mine, remodel,
+                     poacher, festival, laboratory, council_room, moneylender, chapel, artisan, library,
+                     harbinger, vassal, sentry, witch, bureaucrat, bandit, throne_room, gardens]
+
+# Optional, duck-typed like choose_cards_fn/choose_pile_fn -- not a
+# formal parameter, so setup(num_players)'s existing call sites never
+# need to change. Set game.kingdom_card_names before calling setup()
+# to force a specific 10-card kingdom (e.g. one of Section 7's
+# recommended presets); leave it unset for a random 10-of-26 draw.
+kingdom_card_names = getattr(self, "kingdom_card_names", None)
+if kingdom_card_names is not None:
+    by_name = {c.name: c for c in all_kingdom_cards}
+    chosen_cards = [by_name[n] for n in kingdom_card_names]
+else:
+    chosen_cards = random.sample(all_kingdom_cards, 10)
+
+kingdom_counts = [(card_type, 10) for card_type in chosen_cards]
 for card_type, count in kingdom_counts:
     pile = SupplyPile()
     pile.cardType = card_type

@@ -3,9 +3,8 @@ from ..zones.hand import Hand
 from ..zones.discardpile import DiscardPile
 from ..zones.playarea import PlayArea
 from ..cards.card import Card
-from ..cards.cardtypekind import CardTypeKind
 from .supplypile import SupplyPile
-from ..rl.card_constants import COMPUTED_VALUE_VICTORY_CARDS
+from ..cards.cardtypekind import CardTypeKind
 
 class Player:
 
@@ -465,6 +464,7 @@ class Player:
 		self.silverPlayedThisTurn = False
 
 	def calculate_score(self):
+		from ..rl.card_constants import COMPUTED_VALUE_VICTORY_CARDS
 		all_cards = self.deck.cards + self.hand.cards + self.discardPile.cards + self.playArea.cards
 		owned_card_count = len(all_cards)
 		total = 0

@@ -36,7 +36,8 @@ def play_turn(p, game):
 
 def run_kingdom(name, kingdom_names, rounds=60):
     g = Game()
-    g.setup(2, kingdom_card_names=kingdom_names)
+    g.kingdom_card_names = kingdom_names
+    g.setup(2)
     for p in g.players:
         set_heuristic_baseline(p)
     actual_kingdom = sorted(pile.cardType.name for pile in g.supply.piles
