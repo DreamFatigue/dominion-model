@@ -9,21 +9,17 @@ from ..cards.cardtypekind import CardTypeKind
 class Player:
 
 	def __init__(self):
+		self.known_top_cards: Card = []
 		self.actions: int = 0
 		self.buys: int = 0
 		self.coins: int = 0
 		self.silverPlayedThisTurn: bool = False
 		self.declineMoatReveal: bool = False
+		self.current_priority : None = None
 		self.deck = Deck()
 		self.hand = Hand()
 		self.discardPile = DiscardPile()
 		self.playArea = PlayArea()
-		# Refreshed once per turn (see dominion.rl.state.compute_player_state)
-		# by whoever drives the turn loop -- demo.py/env.py/play_human.py.
-		# ai_choose_cards reads this to make its new-card heuristics context-
-		# sensitive, and it's the same value Play Style Profiles logs, so the
-		# two never drift apart.
-		self.current_priority = None
 
 	def draw(self, n):
 		import random
@@ -34,8 +30,12 @@ class Player:
 				self.deck.cards = self.discardPile.cards
 				random.shuffle(self.deck.cards)
 				self.discardPile.cards = []
+				self.known_top_cards = []
 			if self.deck.cards:
-				self.hand.cards.append(self.deck.cards.pop())
+				drawn = self.deck.cards.pop()
+				if self.known_top_cards and self.known_top_cards[0] is drawn:
+					self.known_top_cards.pop(0)
+				self.hand.cards.append(drawn)
 
 	def _is_junk_to_trash(self, card):
 		"""Shared by chapel_trash/sentry_trash. Curses are always junk;
@@ -54,7 +54,7 @@ class Player:
 	def ai_choose_cards(self, candidates, prompt, context, count):
 		from ..rl.state import Priority
 		priority = self.current_priority
-
+		
 		if context == "cellar_discard":
 			return [c for c in candidates if CardTypeKind.Victory in c.types or CardTypeKind.Curse in c.types]
 		if context in ("mine_trash", "remodel_trash"):
@@ -62,7 +62,7 @@ class Player:
 		if context == "militia_discard":
 			sorted_candidates = sorted(candidates, key=lambda c: c.cost)
 			return sorted_candidates[:count]
-
+		
 		if context == "chapel_trash":
 			return [c for c in candidates if self._is_junk_to_trash(c)][:4]
 		if context == "poacher_discard":
@@ -106,7 +106,7 @@ class Player:
 			if not candidates:
 				return []
 			return [min(candidates, key=lambda c: c.treasureFacet.coinValue if c.treasureFacet else 0)]
-
+		
 		return []
 
 	def ai_choose_pile(self, candidates, prompt, context):
@@ -149,8 +149,12 @@ class Player:
 				self.deck.cards = self.discardPile.cards
 				random.shuffle(self.deck.cards)
 				self.discardPile.cards = []
+				self.known_top_cards = []
 			if self.deck.cards:
-				revealed.append(self.deck.cards.pop())
+				card = self.deck.cards.pop()
+				if self.known_top_cards and self.known_top_cards[0] is card:
+					self.known_top_cards.pop(0)
+				revealed.append(card)
 		return revealed
 
 	def _resolve_action_effect(self, card, game):
@@ -158,7 +162,7 @@ class Player:
 		so Throne Room / Vassal can invoke a card's effect re-entrantly
 		without re-paying its action cost or moving it again."""
 		name = card.name
-
+		
 		if name == "Village":
 			self.actions += 2
 			self.draw(1)
@@ -359,6 +363,9 @@ class Player:
 					self.deck.cards.append(c)
 				for c in top_group:
 					self.deck.cards.append(c)
+				# rest_group+top_group were just revealed to everyone and are
+				# now back on top, soonest-drawn (top_group's last entry) first.
+				self.known_top_cards = list(reversed(rest_group + top_group))
 		elif name == "Witch":
 			self.draw(2)
 			for other in game.players:
@@ -476,3 +483,4 @@ class Player:
 				else:
 					total += c.victoryFacet.victoryPoints
 		return total
+

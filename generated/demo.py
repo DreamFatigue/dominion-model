@@ -52,6 +52,10 @@ def print_status(player, idx):
     print(f"    Player {idx}: actions={player.actions} buys={player.buys} coins={player.coins} "
           f"hand={len(player.hand.cards)} deck={len(player.deck.cards)} "
           f"discard={len(player.discardPile.cards)} play_area={len(player.playArea.cards)}")
+    if player.known_top_cards:
+        # Public information regardless of hand visibility -- Sentry revealed
+        # these to everyone before putting them back on top of the deck.
+        print(f"      Known top of deck (soonest first): {[c.name for c in player.known_top_cards]}")
 
 
 def snapshot(game):

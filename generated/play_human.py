@@ -87,8 +87,41 @@ def human_turn(p, idx, game):
     print(f"    [Cleanup] New hand: {[c.name for c in p.hand.cards]}")
 
 
+def choose_kingdom(game):
+    """Ask how the 10-card kingdom should be chosen. Returns a list of 10
+    card names to force, or None to let Game.setup() randomize as before."""
+    mode = questionary.select(
+        "How should the kingdom be chosen?",
+        choices=[
+            questionary.Choice("Randomize (10 random kingdom cards)", value="random"),
+            questionary.Choice("Choose a suggested kingdom", value="suggested"),
+            questionary.Choice("Build a custom kingdom", value="custom"),
+        ],
+    ).ask()
+
+    if mode == "suggested":
+        presets = game.expansion.recommended_kingdoms()
+        name = questionary.select(
+            "Which suggested kingdom?",
+            choices=list(presets.keys()),
+        ).ask()
+        return list(presets[name])
+
+    if mode == "custom":
+        return questionary.checkbox(
+            "Choose exactly 10 kingdom cards (space to select, enter to confirm)",
+            choices=[questionary.Choice(name) for name in game.expansion.kingdom_card_names()],
+            validate=lambda selected: len(selected) == 10 or f"Choose exactly 10 cards (currently {len(selected)})",
+        ).ask()
+
+    return None
+
+
 def main():
     game = Game()
+    kingdom_card_names = choose_kingdom(game)
+    if kingdom_card_names is not None:
+        game.kingdom_card_names = kingdom_card_names
     game.setup(2)
     human, ai = game.players[0], game.players[1]
 

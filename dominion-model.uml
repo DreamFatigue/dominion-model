@@ -113,6 +113,10 @@ return c</body>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_xvwNu6R93V_kO3_7LjXICw" name="hand" type="_GUZ3ZTG7vVXP0BOD63cd7Q" aggregation="composite"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_4_BtrW6MjXIt8nRGG6PKsg" name="discardPile" type="_ahb-e1fIB40_5W24NayBoA" aggregation="composite"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_5jWPb9W-iSbzkXfTlysOiQ" name="playArea" type="_Z9xafxONEplNp9awDSbIww" aggregation="composite"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_h1QwK3nRTZKGUp2v3f8s1A" name="known_top_cards" type="_Fynj5aSoWLHppjotMxbJow" aggregation="shared">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_h1QwK3nRTZKGUp2v3f8s1AL"/>
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_h1QwK3nRTZKGUp2v3f8s1AU" value="*"/>
+        </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_l9fxE2zSFcQJb8z-onS4Rw" name="actions">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedAttribute>
@@ -144,8 +148,12 @@ for _ in range(n):
 		self.deck.cards = self.discardPile.cards
 		random.shuffle(self.deck.cards)
 		self.discardPile.cards = []
+		self.known_top_cards = []
 	if self.deck.cards:
-		self.hand.cards.append(self.deck.cards.pop())</body>
+		drawn = self.deck.cards.pop()
+		if self.known_top_cards and self.known_top_cards[0] is drawn:
+			self.known_top_cards.pop(0)
+		self.hand.cards.append(drawn)</body>
         </ownedBehavior>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_fkmcfJeYSayeD7CcWrAHAw" name="_is_junk_to_trash">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_7kV7xnpvQY-T0HL3VYhYRQ" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
@@ -329,8 +337,12 @@ for _ in range(n):
 		self.deck.cards = self.discardPile.cards
 		random.shuffle(self.deck.cards)
 		self.discardPile.cards = []
+		self.known_top_cards = []
 	if self.deck.cards:
-		revealed.append(self.deck.cards.pop())
+		card = self.deck.cards.pop()
+		if self.known_top_cards and self.known_top_cards[0] is card:
+			self.known_top_cards.pop(0)
+		revealed.append(card)
 return revealed</body>
         </ownedBehavior>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_N-UUeqniS5WGVTeHmrK5GQ" name="_resolve_action_effect">
@@ -544,6 +556,9 @@ elif name == "Sentry":
 			self.deck.cards.append(c)
 		for c in top_group:
 			self.deck.cards.append(c)
+		# rest_group+top_group were just revealed to everyone and are
+		# now back on top, soonest-drawn (top_group's last entry) first.
+		self.known_top_cards = list(reversed(rest_group + top_group))
 elif name == "Witch":
 	self.draw(2)
 	for other in game.players:
@@ -724,10 +739,6 @@ return pile.cardType.clone()</body>
         </ownedBehavior>
       </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_fafwyzeBq2t5E502cWikzQ" name="Game">
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_naWZ8t0-S4yjEpxaAK1HDQ" importedElement="_Fynj5aSoWLHppjotMxbJow"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_hw7EcQ3GQhymIpbHAbfELQ" importedElement="_wFkAiHOPlb3V4ThmZAl6yg"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_sIul9zxvQm6Q1XHvQpfw3Q" importedElement="_RUuVfBSdZzB6WO5g4SKf1Q"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_93NeTRPUQ3OacMoNvwZphg" importedElement="_v2r_z3vMRwYxbZeNt9ZZew"/>
         <elementImport xmi:type="uml:ElementImport" xmi:id="_yBYi45IHRV-snhvxDO6U4A" importedElement="_DbQhCcuWNPMEvA06MBVNqg"/>
         <elementImport xmi:type="uml:ElementImport" xmi:id="_Ta9wQJ76QMuEkwJaKGwAMw" importedElement="_s12wjtrKijp5JJZYh0SxaQ"/>
         <elementImport xmi:type="uml:ElementImport" xmi:id="_QlumqmiCTC2T0ptSIoM2kw" importedElement="_GUZ3ZTG7vVXP0BOD63cd7Q"/>
@@ -739,6 +750,7 @@ return pile.cardType.clone()</body>
         </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_pFc_qQcuID4dXHFonE7ktA" name="supply" type="_O1jQtW8edQ3_lkcl7ldbzw" aggregation="composite"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_fp_-gF9L78teuwX8j2kaww" name="trash" type="_b5KMSunHdn9OK3mXn2JKZg" aggregation="composite"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_G41VZ0-rkZfzlrBKi04KKw" name="expansion" type="_ln9MZ6CNmxIRor4mjjh2lQ" aggregation="composite"/>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_BIDYxkcetdT7g2pYAho-0g" name="setup">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_nDU3GKFrWebBdVksqMvCPA" name="num_players">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
@@ -748,40 +760,14 @@ return pile.cardType.clone()</body>
           <language>Python</language>
           <body>import random
 
-def make_treasure(name, cost, value):
-    c = Card()
-    c.name = name
-    c.cost = cost
-    c.types = [CardTypeKind.Treasure]
-    c.treasureFacet = TreasureFacet()
-    c.treasureFacet.coinValue = value
-    return c
-
-def make_victory(name, cost, points):
-    c = Card()
-    c.name = name
-    c.cost = cost
-    c.types = [CardTypeKind.Victory]
-    c.victoryFacet = VictoryFacet()
-    c.victoryFacet.victoryPoints = points
-    return c
-
-def make_curse():
-    c = Card()
-    c.name = "Curse"
-    c.cost = 0
-    c.types = [CardTypeKind.Curse]
-    c.victoryFacet = VictoryFacet()
-    c.victoryFacet.victoryPoints = -1
-    return c
-
-copper = make_treasure("Copper", 0, 1)
-silver = make_treasure("Silver", 3, 2)
-gold = make_treasure("Gold", 6, 3)
-estate = make_victory("Estate", 2, 1)
-duchy = make_victory("Duchy", 5, 3)
-province = make_victory("Province", 8, 6)
-curse = make_curse()
+basic_cards = self.expansion.basic_cards()
+copper = basic_cards["Copper"]
+silver = basic_cards["Silver"]
+gold = basic_cards["Gold"]
+estate = basic_cards["Estate"]
+duchy = basic_cards["Duchy"]
+province = basic_cards["Province"]
+curse = basic_cards["Curse"]
 
 self.supply = Supply()
 self.supply.piles = []
@@ -794,51 +780,12 @@ for card_type, count in counts:
     pile.count = count
     self.supply.piles.append(pile)
 
-def make_action(name, cost, extra_types=None):
-    c = Card()
-    c.name = name
-    c.cost = cost
-    c.types = [CardTypeKind.Action] + (extra_types or [])
-    return c
-
-village = make_action("Village", 3)
-smithy = make_action("Smithy", 4)
-market = make_action("Market", 5)
-workshop = make_action("Workshop", 3)
-moat = make_action("Moat", 2, [CardTypeKind.Reaction])
-cellar = make_action("Cellar", 2)
-merchant = make_action("Merchant", 3)
-militia = make_action("Militia", 4, [CardTypeKind.Attack])
-mine = make_action("Mine", 5)
-remodel = make_action("Remodel", 4)
-poacher = make_action("Poacher", 4)
-festival = make_action("Festival", 5)
-laboratory = make_action("Laboratory", 5)
-council_room = make_action("Council Room", 5)
-moneylender = make_action("Moneylender", 4)
-chapel = make_action("Chapel", 2)
-artisan = make_action("Artisan", 6)
-library = make_action("Library", 5)
-harbinger = make_action("Harbinger", 3)
-vassal = make_action("Vassal", 3)
-sentry = make_action("Sentry", 5)
-witch = make_action("Witch", 5, [CardTypeKind.Attack])
-bureaucrat = make_action("Bureaucrat", 4, [CardTypeKind.Attack])
-bandit = make_action("Bandit", 5, [CardTypeKind.Attack])
-throne_room = make_action("Throne Room", 4)
-# Gardens' real VP is computed dynamically from deck size (see
-# dominion.rl.card_constants.COMPUTED_VALUE_VICTORY_CARDS) -- the
-# static victoryPoints=0 here is just a placeholder, never read.
-gardens = make_victory("Gardens", 4, 0)
-
-all_kingdom_cards = [village, smithy, market, workshop, moat, cellar, merchant, militia, mine, remodel,
-                     poacher, festival, laboratory, council_room, moneylender, chapel, artisan, library,
-                     harbinger, vassal, sentry, witch, bureaucrat, bandit, throne_room, gardens]
+all_kingdom_cards = self.expansion.all_kingdom_cards()
 
 # Optional, duck-typed like choose_cards_fn/choose_pile_fn -- not a
 # formal parameter, so setup(num_players)'s existing call sites never
 # need to change. Set game.kingdom_card_names before calling setup()
-# to force a specific 10-card kingdom (e.g. one of Section 7's
+# to force a specific 10-card kingdom (e.g. one of BaseExpansion's
 # recommended presets); leave it unset for a random 10-of-26 draw.
 kingdom_card_names = getattr(self, "kingdom_card_names", None)
 if kingdom_card_names is not None:
@@ -872,9 +819,9 @@ for i in range(num_players):
     p.buys = 1
     p.coins = 0
     for _ in range(7):
-        p.deck.cards.append(make_treasure("Copper", 0, 1))
+        p.deck.cards.append(copper.clone())
     for _ in range(3):
-        p.deck.cards.append(make_victory("Estate", 2, 1))
+        p.deck.cards.append(estate.clone())
     random.shuffle(p.deck.cards)
     p.end_turn()
     self.players.append(p)</body>
@@ -887,6 +834,124 @@ for i in range(num_players):
         return True
 empty_piles = sum(1 for pile in self.supply.piles if pile.count &lt;= 0)
 return empty_piles &gt;= 3</body>
+        </ownedBehavior>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_Df64SrFXIeHT3-WSUBR2jw" name="Expansions">
+      <packagedElement xmi:type="uml:Class" xmi:id="_ln9MZ6CNmxIRor4mjjh2lQ" name="BaseExpansion">
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_pDqXBsRgoJhhn6mebEalhA" importedElement="_Fynj5aSoWLHppjotMxbJow"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_TXeZaFhmNjX6uv8za65ffQ" importedElement="_wFkAiHOPlb3V4ThmZAl6yg"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_b6Oh0sUEqQlZzkWm-FdO7A" importedElement="_RUuVfBSdZzB6WO5g4SKf1Q"/>
+        <elementImport xmi:type="uml:ElementImport" xmi:id="_-PtsEq5OsftGKE0BZPCFNw" importedElement="_v2r_z3vMRwYxbZeNt9ZZew"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_4sqafMGfjMj9c8-2-xhi5w" name="basic_cards"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_FrM-hCUgBsFEMbg8FAdfPw" name="basic_cards" specification="_4sqafMGfjMj9c8-2-xhi5w">
+          <language>Python</language>
+          <body>def make_treasure(name, cost, value):
+    c = Card()
+    c.name = name
+    c.cost = cost
+    c.types = [CardTypeKind.Treasure]
+    c.treasureFacet = TreasureFacet()
+    c.treasureFacet.coinValue = value
+    return c
+
+def make_victory(name, cost, points):
+    c = Card()
+    c.name = name
+    c.cost = cost
+    c.types = [CardTypeKind.Victory]
+    c.victoryFacet = VictoryFacet()
+    c.victoryFacet.victoryPoints = points
+    return c
+
+def make_curse():
+    c = Card()
+    c.name = "Curse"
+    c.cost = 0
+    c.types = [CardTypeKind.Curse]
+    c.victoryFacet = VictoryFacet()
+    c.victoryFacet.victoryPoints = -1
+    return c
+
+return {
+    "Copper": make_treasure("Copper", 0, 1),
+    "Silver": make_treasure("Silver", 3, 2),
+    "Gold": make_treasure("Gold", 6, 3),
+    "Estate": make_victory("Estate", 2, 1),
+    "Duchy": make_victory("Duchy", 5, 3),
+    "Province": make_victory("Province", 8, 6),
+    "Curse": make_curse(),
+}</body>
+        </ownedBehavior>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_kG2wd54gJ8h1NqliBeYYTw" name="all_kingdom_cards"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Een8HAOjLMsfk6RbxbbJgQ" name="all_kingdom_cards" specification="_kG2wd54gJ8h1NqliBeYYTw">
+          <language>Python</language>
+          <body>def make_action(name, cost, extra_types=None):
+    c = Card()
+    c.name = name
+    c.cost = cost
+    c.types = [CardTypeKind.Action] + (extra_types or [])
+    return c
+
+def make_victory(name, cost, points):
+    c = Card()
+    c.name = name
+    c.cost = cost
+    c.types = [CardTypeKind.Victory]
+    c.victoryFacet = VictoryFacet()
+    c.victoryFacet.victoryPoints = points
+    return c
+
+village = make_action("Village", 3)
+smithy = make_action("Smithy", 4)
+market = make_action("Market", 5)
+workshop = make_action("Workshop", 3)
+moat = make_action("Moat", 2, [CardTypeKind.Reaction])
+cellar = make_action("Cellar", 2)
+merchant = make_action("Merchant", 3)
+militia = make_action("Militia", 4, [CardTypeKind.Attack])
+mine = make_action("Mine", 5)
+remodel = make_action("Remodel", 4)
+poacher = make_action("Poacher", 4)
+festival = make_action("Festival", 5)
+laboratory = make_action("Laboratory", 5)
+council_room = make_action("Council Room", 5)
+moneylender = make_action("Moneylender", 4)
+chapel = make_action("Chapel", 2)
+artisan = make_action("Artisan", 6)
+library = make_action("Library", 5)
+harbinger = make_action("Harbinger", 3)
+vassal = make_action("Vassal", 3)
+sentry = make_action("Sentry", 5)
+witch = make_action("Witch", 5, [CardTypeKind.Attack])
+bureaucrat = make_action("Bureaucrat", 4, [CardTypeKind.Attack])
+bandit = make_action("Bandit", 5, [CardTypeKind.Attack])
+throne_room = make_action("Throne Room", 4)
+# Gardens' real VP is computed dynamically from deck size (see
+# dominion.rl.card_constants.COMPUTED_VALUE_VICTORY_CARDS) -- the
+# static victoryPoints=0 here is just a placeholder, never read.
+gardens = make_victory("Gardens", 4, 0)
+
+return [village, smithy, market, workshop, moat, cellar, merchant, militia, mine, remodel,
+        poacher, festival, laboratory, council_room, moneylender, chapel, artisan, library,
+        harbinger, vassal, sentry, witch, bureaucrat, bandit, throne_room, gardens]</body>
+        </ownedBehavior>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_idGCl5JpE7QpYdfPtC1h8A" name="kingdom_card_names"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Np0SEmcUV3to3_6zUBX4Mw" name="kingdom_card_names" specification="_idGCl5JpE7QpYdfPtC1h8A">
+          <language>Python</language>
+          <body>return [c.name for c in self.all_kingdom_cards()]</body>
+        </ownedBehavior>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_JhNLvfAxr4FsDSreC-aZMw" name="recommended_kingdoms"/>
+        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_984zbUOhbKwr71AC_hEMHg" name="recommended_kingdoms" specification="_JhNLvfAxr4FsDSreC-aZMw">
+          <language>Python</language>
+          <body>return {
+    "First Game": ["Cellar", "Market", "Merchant", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Workshop"],
+    "Size Distortion": ["Artisan", "Bandit", "Bureaucrat", "Chapel", "Festival", "Gardens", "Sentry", "Throne Room", "Witch", "Workshop"],
+    "Deck Top": ["Artisan", "Bureaucrat", "Council Room", "Festival", "Harbinger", "Laboratory", "Moneylender", "Sentry", "Vassal", "Village"],
+    "Sleight of Hand": ["Cellar", "Council Room", "Festival", "Gardens", "Harbinger", "Library", "Militia", "Poacher", "Smithy", "Throne Room"],
+    "Improvements": ["Artisan", "Cellar", "Market", "Merchant", "Mine", "Moat", "Moneylender", "Poacher", "Remodel", "Witch"],
+    "Silver &amp; Gold": ["Bandit", "Bureaucrat", "Chapel", "Harbinger", "Laboratory", "Merchant", "Mine", "Moneylender", "Throne Room", "Vassal"],
+}</body>
         </ownedBehavior>
       </packagedElement>
     </packagedElement>
