@@ -1,146 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Blocks="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Blocks" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Blocks http://www.eclipse.org/papyrus/sysml/1.6/SysML#//blocks" xmi:id="_FPuv0JxYEfGOPOoE5BT8MQ" name="dominion-model">
-  <packageImport xmi:type="uml:PackageImport" xmi:id="_FR9kcJxYEfGOPOoE5BT8MQ">
-    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
-  </packageImport>
-  <packageImport xmi:type="uml:PackageImport" xmi:id="_FSJKoJxYEfGOPOoE5BT8MQ">
-    <importedPackage xmi:type="uml:Package" href="pathmap://SysML16_LIBRARIES/SysML-Standard-Library.uml#SysML.package_packagedElement_Libraries"/>
-  </packageImport>
-  <packagedElement xmi:type="uml:Package" xmi:id="_0_RFgo7ykJ7d56BD6BkdRQ" name="Dominion">
-    <packagedElement xmi:type="uml:Package" xmi:id="_q5D2mdEC2EbU6V7I0Q__ZQ" name="Cards">
-      <packagedElement xmi:type="uml:Enumeration" xmi:id="_wFkAiHOPlb3V4ThmZAl6yg" name="CardTypeKind">
-        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_z2kdZjMcWECwKBojr-9GTA" name="Action"/>
-        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_oGkcQmsWh9iJt1sz6RpaUw" name="Treasure"/>
-        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_CKlC219veTRQMCF0338cvA" name="Victory"/>
-        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_bZYALoUmDxf7byS52zaXKg" name="Curse"/>
-        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_mENkiR2vzi_ft4wD72cFYA" name="Attack"/>
-        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_ylLj_4aNTIfSU5rIos6OPQ" name="Reaction"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_RUuVfBSdZzB6WO5g4SKf1Q" name="TreasureFacet">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_4JbWhrxBQc9eT4BuJTdf0A" name="coinValue">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedAttribute>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_v2r_z3vMRwYxbZeNt9ZZew" name="VictoryFacet">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_3j8oxln8iGp2aCSdfjCdDA" name="victoryPoints">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedAttribute>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_Fynj5aSoWLHppjotMxbJow" name="Card">
-        <ownedRule xmi:type="uml:Constraint" xmi:id="_09OWL1NRweoLW3UVnRJC1Q" name="HasTreasureFacet" constrainedElement="_Fynj5aSoWLHppjotMxbJow">
-          <specification xmi:type="uml:OpaqueExpression" xmi:id="_4RYY483mlOJ-2UJK6BabVA">
-            <language>OCL</language>
-            <body>types->includes(CardTypeKind::Treasure) implies treasureFacet->notEmpty()</body>
-          </specification>
-        </ownedRule>
-        <ownedRule xmi:type="uml:Constraint" xmi:id="_y47WZArulLiBb1DYEde5dg" name="HasVictoryFacet" constrainedElement="_Fynj5aSoWLHppjotMxbJow">
-          <specification xmi:type="uml:OpaqueExpression" xmi:id="_AiCKNvOvrZOiM1HCHHEMtQ">
-            <language>OCL</language>
-            <body>(types->includes(CardTypeKind::Victory) or types->includes(CardTypeKind::Curse)) implies victoryFacet->notEmpty()</body>
-          </specification>
-        </ownedRule>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_xV9ZmGsYe9PCJbSIIB-S-A" name="name">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_FnQ4eQ2gOP4rDiv0piJVLQ" name="cost">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_HnbNvuZ8Du27e1j6r531gA" name="types" type="_wFkAiHOPlb3V4ThmZAl6yg">
-          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Pzp45M10mp-WoJmn5aNQUQ" value="1"/>
-          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fojfulSN-QhXXmyAN_kThg" value="*"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_Rp8_Potvaiz-nbXQb8PO_Q" name="treasureFacet" type="_RUuVfBSdZzB6WO5g4SKf1Q" aggregation="composite">
-          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_7VYIx4CZMGVU1PfqW63khQ"/>
-          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FL0LX3y4gdoZSD-hAhWRmA" value="1"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_aU_mJ2oWrLb_qP7CF23I0g" name="victoryFacet" type="_v2r_z3vMRwYxbZeNt9ZZew" aggregation="composite">
-          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3LPZiiwYMUrKlxQHOya1Fw"/>
-          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Y3il_kajxLeI0dPwUIS0NQ" value="1"/>
-        </ownedAttribute>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_Vr8WYrTxYYzTuy9ekYLIhg" name="describe"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="__1YmPt-YCeXb65WVnZQ53w" name="describe" specification="_Vr8WYrTxYYzTuy9ekYLIhg">
-          <language>Python</language>
-          <body>return f"{self.name} (cost {self.cost})"</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_IN-hJwAi0m98uI8qRKBlfw" name="validate"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_xNd8IXB25Vdht-5FBLUPIA" name="validate" specification="_IN-hJwAi0m98uI8qRKBlfw">
-          <language>Python</language>
-          <body>if CardTypeKind.Treasure in self.types:
-    assert self.treasureFacet is not None, "Treasure cards must have a treasureFacet"
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Blocks="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Blocks" xmlns:Codegen="http://www.eclipse.org/papyrus/Codegen/1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http://www.eclipse.org/papyrus/sysml/1.6/SysML/Blocks http://www.eclipse.org/papyrus/sysml/1.6/SysML#//blocks">
+  <uml:Model xmi:id="_FPuv0JxYEfGOPOoE5BT8MQ" name="dominion-model">
+    <packageImport xmi:type="uml:PackageImport" xmi:id="_FR9kcJxYEfGOPOoE5BT8MQ">
+      <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+    </packageImport>
+    <packageImport xmi:type="uml:PackageImport" xmi:id="_FSJKoJxYEfGOPOoE5BT8MQ">
+      <importedPackage xmi:type="uml:Package" href="pathmap://SysML16_LIBRARIES/SysML-Standard-Library.uml#SysML.package_packagedElement_Libraries"/>
+    </packageImport>
+    <packagedElement xmi:type="uml:Package" xmi:id="_0_RFgo7ykJ7d56BD6BkdRQ" name="Dominion">
+      <packagedElement xmi:type="uml:Package" xmi:id="_q5D2mdEC2EbU6V7I0Q__ZQ" name="Cards">
+        <packagedElement xmi:type="uml:Enumeration" xmi:id="_wFkAiHOPlb3V4ThmZAl6yg" name="CardTypeKind">
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_z2kdZjMcWECwKBojr-9GTA" name="Action"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_oGkcQmsWh9iJt1sz6RpaUw" name="Treasure"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_CKlC219veTRQMCF0338cvA" name="Victory"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_bZYALoUmDxf7byS52zaXKg" name="Curse"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_mENkiR2vzi_ft4wD72cFYA" name="Attack"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_ylLj_4aNTIfSU5rIos6OPQ" name="Reaction"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_RUuVfBSdZzB6WO5g4SKf1Q" name="TreasureFacet">
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_4JbWhrxBQc9eT4BuJTdf0A" name="coinValue">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedAttribute>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_v2r_z3vMRwYxbZeNt9ZZew" name="VictoryFacet">
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_3j8oxln8iGp2aCSdfjCdDA" name="victoryPoints">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedAttribute>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_Fynj5aSoWLHppjotMxbJow" name="Card">
+          <ownedRule xmi:type="uml:Constraint" xmi:id="_09OWL1NRweoLW3UVnRJC1Q" name="HasTreasureFacet" constrainedElement="_Fynj5aSoWLHppjotMxbJow">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_4RYY483mlOJ-2UJK6BabVA">
+              <language>OCL</language>
+              <body>types->includes(CardTypeKind::Treasure) implies treasureFacet->notEmpty()</body>
+            </specification>
+          </ownedRule>
+          <ownedRule xmi:type="uml:Constraint" xmi:id="_y47WZArulLiBb1DYEde5dg" name="HasVictoryFacet" constrainedElement="_Fynj5aSoWLHppjotMxbJow">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_AiCKNvOvrZOiM1HCHHEMtQ">
+              <language>OCL</language>
+              <body>(types->includes(CardTypeKind::Victory) or types->includes(CardTypeKind::Curse)) implies victoryFacet->notEmpty()</body>
+            </specification>
+          </ownedRule>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_xV9ZmGsYe9PCJbSIIB-S-A" name="name">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_FnQ4eQ2gOP4rDiv0piJVLQ" name="cost">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_HnbNvuZ8Du27e1j6r531gA" name="types" type="_wFkAiHOPlb3V4ThmZAl6yg">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Pzp45M10mp-WoJmn5aNQUQ" value="1"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fojfulSN-QhXXmyAN_kThg" value="*"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_Rp8_Potvaiz-nbXQb8PO_Q" name="treasureFacet" type="_RUuVfBSdZzB6WO5g4SKf1Q" aggregation="composite">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_7VYIx4CZMGVU1PfqW63khQ"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FL0LX3y4gdoZSD-hAhWRmA" value="1"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_aU_mJ2oWrLb_qP7CF23I0g" name="victoryFacet" type="_v2r_z3vMRwYxbZeNt9ZZew" aggregation="composite">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3LPZiiwYMUrKlxQHOya1Fw"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Y3il_kajxLeI0dPwUIS0NQ" value="1"/>
+          </ownedAttribute>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="__1YmPt-YCeXb65WVnZQ53w" name="describe" specification="_Vr8WYrTxYYzTuy9ekYLIhg">
+            <language>Python</language>
+            <body>return f&quot;{self.name} (cost {self.cost})&quot;</body>
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_xNd8IXB25Vdht-5FBLUPIA" name="validate" specification="_IN-hJwAi0m98uI8qRKBlfw">
+            <language>Python</language>
+            <body>if CardTypeKind.Treasure in self.types:
+    assert self.treasureFacet is not None, &quot;Treasure cards must have a treasureFacet&quot;
 if CardTypeKind.Victory in self.types or CardTypeKind.Curse in self.types:
-    assert self.victoryFacet is not None, "Victory/Curse cards must have a victoryFacet"</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_IMY9R_2oGiTrwnJPOml16A" name="clone"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UzhXkncHS_4AEAeAnUx0Vg" name="clone" specification="_IMY9R_2oGiTrwnJPOml16A">
-          <language>Python</language>
-          <body>c = Card()
+    assert self.victoryFacet is not None, &quot;Victory/Curse cards must have a victoryFacet&quot;</body>
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UzhXkncHS_4AEAeAnUx0Vg" name="clone" specification="_IMY9R_2oGiTrwnJPOml16A">
+            <language>Python</language>
+            <body>c = Card()
 c.name = self.name
 c.cost = self.cost
 c.types = list(self.types)
 c.treasureFacet.coinValue = self.treasureFacet.coinValue
 c.victoryFacet.victoryPoints = self.victoryFacet.victoryPoints
 return c</body>
-        </ownedBehavior>
+          </ownedBehavior>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_Vr8WYrTxYYzTuy9ekYLIhg" name="describe" method="__1YmPt-YCeXb65WVnZQ53w"/>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_IN-hJwAi0m98uI8qRKBlfw" name="validate" method="_xNd8IXB25Vdht-5FBLUPIA"/>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_IMY9R_2oGiTrwnJPOml16A" name="clone" method="_UzhXkncHS_4AEAeAnUx0Vg"/>
+        </packagedElement>
       </packagedElement>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Package" xmi:id="_Z5FtupBjcOSQL4W3gswIlg" name="Zones">
-      <packagedElement xmi:type="uml:Class" xmi:id="_cWuTLvIrVD4DYlBeGAVTQg" name="CardZone" isAbstract="true">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="__YxD1Sw55Ez-OCH76BT3NQ" name="cards" type="_Fynj5aSoWLHppjotMxbJow" aggregation="shared">
-          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qEUzGfSKUsBhx931k5Ojwg"/>
-          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8SmJ4C00l3vGdugOn2UQfg" value="*"/>
-        </ownedAttribute>
+      <packagedElement xmi:type="uml:Package" xmi:id="_Z5FtupBjcOSQL4W3gswIlg" name="Zones">
+        <packagedElement xmi:type="uml:Class" xmi:id="_cWuTLvIrVD4DYlBeGAVTQg" name="CardZone" isAbstract="true">
+          <ownedAttribute xmi:type="uml:Property" xmi:id="__YxD1Sw55Ez-OCH76BT3NQ" name="cards" type="_Fynj5aSoWLHppjotMxbJow" aggregation="shared">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qEUzGfSKUsBhx931k5Ojwg"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8SmJ4C00l3vGdugOn2UQfg" value="*"/>
+          </ownedAttribute>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_s12wjtrKijp5JJZYh0SxaQ" name="Deck">
+          <generalization xmi:type="uml:Generalization" xmi:id="_VyHYJsxlsz2X4EElzNQHVQ" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_GUZ3ZTG7vVXP0BOD63cd7Q" name="Hand">
+          <generalization xmi:type="uml:Generalization" xmi:id="_5-MgAUaC9eUL5SEfItxliA" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_ahb-e1fIB40_5W24NayBoA" name="DiscardPile">
+          <generalization xmi:type="uml:Generalization" xmi:id="_0En_ckuUE78AHAXsUzFE4A" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_Z9xafxONEplNp9awDSbIww" name="PlayArea">
+          <generalization xmi:type="uml:Generalization" xmi:id="_mAKlE7ooPlrAaJSI09o51A" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_b5KMSunHdn9OK3mXn2JKZg" name="Trash">
+          <generalization xmi:type="uml:Generalization" xmi:id="_gZViXjvICrqJkgWGwuLfjg" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
+        </packagedElement>
       </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_s12wjtrKijp5JJZYh0SxaQ" name="Deck">
-        <generalization xmi:type="uml:Generalization" xmi:id="_VyHYJsxlsz2X4EElzNQHVQ" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_GUZ3ZTG7vVXP0BOD63cd7Q" name="Hand">
-        <generalization xmi:type="uml:Generalization" xmi:id="_5-MgAUaC9eUL5SEfItxliA" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_ahb-e1fIB40_5W24NayBoA" name="DiscardPile">
-        <generalization xmi:type="uml:Generalization" xmi:id="_0En_ckuUE78AHAXsUzFE4A" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_Z9xafxONEplNp9awDSbIww" name="PlayArea">
-        <generalization xmi:type="uml:Generalization" xmi:id="_mAKlE7ooPlrAaJSI09o51A" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_b5KMSunHdn9OK3mXn2JKZg" name="Trash">
-        <generalization xmi:type="uml:Generalization" xmi:id="_gZViXjvICrqJkgWGwuLfjg" general="_cWuTLvIrVD4DYlBeGAVTQg"/>
-      </packagedElement>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Package" xmi:id="_x6mbAVua7dPwatC-NJhf4A" name="Structure">
-      <packagedElement xmi:type="uml:Class" xmi:id="_djIVjnlCztUpPVVgfj8sHQ" name="Player">
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_Cx05U3QHSKGvLFmBKF4ylg" importedElement="_wFkAiHOPlb3V4ThmZAl6yg"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_Vnnx0aF2byzy8jLqj4xKQA" name="deck" type="_s12wjtrKijp5JJZYh0SxaQ" aggregation="composite"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_xvwNu6R93V_kO3_7LjXICw" name="hand" type="_GUZ3ZTG7vVXP0BOD63cd7Q" aggregation="composite"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_4_BtrW6MjXIt8nRGG6PKsg" name="discardPile" type="_ahb-e1fIB40_5W24NayBoA" aggregation="composite"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_5jWPb9W-iSbzkXfTlysOiQ" name="playArea" type="_Z9xafxONEplNp9awDSbIww" aggregation="composite"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_h1QwK3nRTZKGUp2v3f8s1A" name="known_top_cards" type="_Fynj5aSoWLHppjotMxbJow" aggregation="shared">
-          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_h1QwK3nRTZKGUp2v3f8s1AL"/>
-          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_h1QwK3nRTZKGUp2v3f8s1AU" value="*"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_l9fxE2zSFcQJb8z-onS4Rw" name="actions">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_EnQZRV1__SxZCgfESQiSvg" name="buys">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_23L4k3gUt34xnXJ6x9op_Q" name="coins">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_TSTTamISfy7lG9LDkOqYQg" name="silverPlayedThisTurn">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_z8E7ga78131ftCr27O-NVA" name="declineMoatReveal">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_EA1xciHAS5-fPJsNXEhdTQ" name="current_priority"/>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_9jaTq0-1M4RC3dXjE5LpfQ" name="draw">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_W7e72RQctgfRN8coAZgKnQ" name="n">
+      <packagedElement xmi:type="uml:Package" xmi:id="_x6mbAVua7dPwatC-NJhf4A" name="Structure">
+        <packagedElement xmi:type="uml:Class" xmi:id="_djIVjnlCztUpPVVgfj8sHQ" name="Player">
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_Cx05U3QHSKGvLFmBKF4ylg" importedElement="_wFkAiHOPlb3V4ThmZAl6yg"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_Vnnx0aF2byzy8jLqj4xKQA" name="deck" type="_s12wjtrKijp5JJZYh0SxaQ" aggregation="composite"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_xvwNu6R93V_kO3_7LjXICw" name="hand" type="_GUZ3ZTG7vVXP0BOD63cd7Q" aggregation="composite"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_4_BtrW6MjXIt8nRGG6PKsg" name="discardPile" type="_ahb-e1fIB40_5W24NayBoA" aggregation="composite"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_5jWPb9W-iSbzkXfTlysOiQ" name="playArea" type="_Z9xafxONEplNp9awDSbIww" aggregation="composite"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_h1QwK3nRTZKGUp2v3f8s1A" name="known_top_cards" type="_Fynj5aSoWLHppjotMxbJow" aggregation="shared">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_h1QwK3nRTZKGUp2v3f8s1AL"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_h1QwK3nRTZKGUp2v3f8s1AU" value="*"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_l9fxE2zSFcQJb8z-onS4Rw" name="actions">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_wj_cyO2Yn-MZLdkuUlP0Mw" name="draw" specification="_9jaTq0-1M4RC3dXjE5LpfQ">
-          <language>Python</language>
-          <body>import random
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_EnQZRV1__SxZCgfESQiSvg" name="buys">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_23L4k3gUt34xnXJ6x9op_Q" name="coins">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_TSTTamISfy7lG9LDkOqYQg" name="silverPlayedThisTurn">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_z8E7ga78131ftCr27O-NVA" name="declineMoatReveal">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_EA1xciHAS5-fPJsNXEhdTQ" name="current_priority"/>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_wj_cyO2Yn-MZLdkuUlP0Mw" name="draw" specification="_9jaTq0-1M4RC3dXjE5LpfQ">
+            <language>Python</language>
+            <body>import random
 for _ in range(n):
 	if not self.deck.cards:
 		if not self.discardPile.cards:
@@ -154,146 +150,92 @@ for _ in range(n):
 		if self.known_top_cards and self.known_top_cards[0] is drawn:
 			self.known_top_cards.pop(0)
 		self.hand.cards.append(drawn)</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_fkmcfJeYSayeD7CcWrAHAw" name="_is_junk_to_trash">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_7kV7xnpvQY-T0HL3VYhYRQ" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_vudtdrf_TVaZyyxnbggKEg" name="_is_junk_to_trash" specification="_fkmcfJeYSayeD7CcWrAHAw">
-          <language>Python</language>
-          <body>"""Shared by chapel_trash/sentry_trash. Curses are always junk;
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_vudtdrf_TVaZyyxnbggKEg" name="_is_junk_to_trash" specification="_fkmcfJeYSayeD7CcWrAHAw">
+            <language>Python</language>
+            <body>&quot;&quot;&quot;Shared by chapel_trash/sentry_trash. Curses are always junk;
 Estates are junk unless current_priority is Growth (Gardens wants
 total card count, not quality); Coppers are only junk once priority
-has actually shifted to Shedding."""
+has actually shifted to Shedding.&quot;&quot;&quot;
 from ..rl.state import Priority
-if card.name == "Curse":
+if card.name == &quot;Curse&quot;:
 	return True
-if card.name == "Estate":
+if card.name == &quot;Estate&quot;:
 	return self.current_priority != Priority.Growth
-if card.name == "Copper":
+if card.name == &quot;Copper&quot;:
 	return self.current_priority == Priority.Shedding
 return False</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_PS9CRJWiNxra3aZHuwLf-A" name="ai_choose_cards">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_bPApZUMvaD7CFBVKLB_RIg" name="candidates" type="_Fynj5aSoWLHppjotMxbJow">
-            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_bPApZUMvaD7CFBVKLB_RIgL" value="0"/>
-            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_bPApZUMvaD7CFBVKLB_RIgU" value="*"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_hUOjPB4ZOZ4RRCJrm06Dbg" name="prompt">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_KA3-DH1_60t3SC8JDW8s4A" name="context">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_hBXAWrc_hTPYHjaXgVQyqg" name="count">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Yptr3QRxN6Ke6kFkff2Rzg" name="ai_choose_cards" specification="_PS9CRJWiNxra3aZHuwLf-A">
-          <language>Python</language>
-          <body>from ..rl.state import Priority
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Yptr3QRxN6Ke6kFkff2Rzg" name="ai_choose_cards" specification="_PS9CRJWiNxra3aZHuwLf-A">
+            <language>Python</language>
+            <body>from ..rl.state import Priority
 priority = self.current_priority
 
-if context == "cellar_discard":
+if context == &quot;cellar_discard&quot;:
 	return [c for c in candidates if CardTypeKind.Victory in c.types or CardTypeKind.Curse in c.types]
-if context in ("mine_trash", "remodel_trash"):
+if context in (&quot;mine_trash&quot;, &quot;remodel_trash&quot;):
 	return [min(candidates, key=lambda c: c.cost)] if candidates else []
-if context == "militia_discard":
+if context == &quot;militia_discard&quot;:
 	sorted_candidates = sorted(candidates, key=lambda c: c.cost)
 	return sorted_candidates[:count]
 
-if context == "chapel_trash":
+if context == &quot;chapel_trash&quot;:
 	return [c for c in candidates if self._is_junk_to_trash(c)][:4]
-if context == "poacher_discard":
+if context == &quot;poacher_discard&quot;:
 	return sorted(candidates, key=lambda c: c.cost)[:count]
-if context == "moneylender_trash":
+if context == &quot;moneylender_trash&quot;:
 	# Always worth it: lose a Copper (worth 1), gain 3 Coins this turn.
 	return candidates[:1]
-if context == "artisan_topdeck":
+if context == &quot;artisan_topdeck&quot;:
 	# Keep the best of hand out this turn; put the worst back to draw again later.
 	return [min(candidates, key=lambda c: c.cost)] if candidates else []
-if context == "library_skip":
+if context == &quot;library_skip&quot;:
 	# Skip drawn Actions you can't use this turn anyway, or don't
 	# currently want (priority has shifted off Actions/Draw).
 	if self.actions &lt;= 0 or priority in (Priority.Money, Priority.VPs):
 		return list(candidates)
 	return []
-if context == "harbinger_topdeck":
+if context == &quot;harbinger_topdeck&quot;:
 	if not candidates:
 		return []
 	best = max(candidates, key=lambda c: c.cost)
 	if best.cost &lt;= 0 and priority != Priority.Money:
 		return []
 	return [best]
-if context == "vassal_play":
+if context == &quot;vassal_play&quot;:
 	# A free extra Action play is essentially always worth taking.
 	return list(candidates)
-if context == "sentry_trash":
+if context == &quot;sentry_trash&quot;:
 	return [c for c in candidates if self._is_junk_to_trash(c)]
-if context == "sentry_discard":
-	return [c for c in candidates if CardTypeKind.Victory in c.types or c.name == "Copper"]
-if context == "sentry_reorder":
+if context == &quot;sentry_discard&quot;:
+	return [c for c in candidates if CardTypeKind.Victory in c.types or c.name == &quot;Copper&quot;]
+if context == &quot;sentry_reorder&quot;:
 	# Keep whatever's left in its current (post-trash/discard) order.
 	return list(candidates)
-if context == "bureaucrat_topdeck":
+if context == &quot;bureaucrat_topdeck&quot;:
 	# Forced choice: minimize the loss by topdecking the cheapest VP.
 	if not candidates:
 		return []
 	return [min(candidates, key=lambda c: c.victoryFacet.victoryPoints if c.victoryFacet else 0)]
-if context == "bandit_trash":
+if context == &quot;bandit_trash&quot;:
 	# Forced choice: sacrifice the less valuable Treasure.
 	if not candidates:
 		return []
 	return [min(candidates, key=lambda c: c.treasureFacet.coinValue if c.treasureFacet else 0)]
 
 return []</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_1yCxz1HtHgiy7RKNzZZ9eg" name="ai_choose_pile">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_5OqTyD6DYj4Yn2JWa9YomQ" name="candidates" type="_DbQhCcuWNPMEvA06MBVNqg">
-            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_5OqTyD6DYj4Yn2JWa9YomQL" value="0"/>
-            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_5OqTyD6DYj4Yn2JWa9YomQU" value="*"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_w3v2P5qSO5D6NpOJRgCaSg" name="prompt">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_qzpA4oir_MH4b7K0-fCP0A" name="context">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_E9jABuX0HRQw_Z7YQeqTzQ" name="ai_choose_pile" specification="_1yCxz1HtHgiy7RKNzZZ9eg">
-          <language>Python</language>
-          <body>return max(candidates, key=lambda p: p.cardType.cost) if candidates else None</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_xRUUqk-YQi-flH2pedpb3A" name="ai_choose_action">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_n5GGnj35QviRGXgCbZF6dQ" name="candidates" type="_Fynj5aSoWLHppjotMxbJow">
-            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_n5GGnj35QviRGXgCbZF6dQL" value="0"/>
-            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_n5GGnj35QviRGXgCbZF6dQU" value="*"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_7RtKwqZMS9C275i6m2xb_Q" name="prompt">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_UVCdLikvQPKH0QFN2P8GHg" name="context">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_I8Gjpqv6SJm1nXV9ZYpTog" name="ai_choose_action" specification="_xRUUqk-YQi-flH2pedpb3A">
-          <language>Python</language>
-          <body>return candidates[0] if candidates else None</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_MtsNwGBsSIiE8pYqpLtYyw" name="ai_choose_buy">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_fLQgnXQ-QhuurWsNtk1olw" name="candidates" type="_DbQhCcuWNPMEvA06MBVNqg">
-            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_fLQgnXQ-QhuurWsNtk1olwL" value="0"/>
-            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fLQgnXQ-QhuurWsNtk1olwU" value="*"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_dXZqOe2ASdeOyVDClzqkYA" name="prompt">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_n9r1P-3nQwSSUa5RIETMyA" name="context">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UVs4P7ISQnuzlrCZ3WzQ8A" name="ai_choose_buy" specification="_MtsNwGBsSIiE8pYqpLtYyw">
-          <language>Python</language>
-          <body>import random
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_E9jABuX0HRQw_Z7YQeqTzQ" name="ai_choose_pile" specification="_1yCxz1HtHgiy7RKNzZZ9eg">
+            <language>Python</language>
+            <body>return max(candidates, key=lambda p: p.cardType.cost) if candidates else None</body>
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_I8Gjpqv6SJm1nXV9ZYpTog" name="ai_choose_action" specification="_xRUUqk-YQi-flH2pedpb3A">
+            <language>Python</language>
+            <body>return candidates[0] if candidates else None</body>
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_UVs4P7ISQnuzlrCZ3WzQ8A" name="ai_choose_buy" specification="_MtsNwGBsSIiE8pYqpLtYyw">
+            <language>Python</language>
+            <body>import random
 if not candidates:
 	return None
 action_affordable = [pile for pile in candidates if CardTypeKind.Action in pile.cardType.types]
@@ -301,14 +243,10 @@ pool = action_affordable if action_affordable else candidates
 top_cost = max(pile.cardType.cost for pile in pool)
 tier = [pile for pile in pool if pile.cardType.cost == top_cost]
 return random.choice(tier)</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_ngjGx6lNKNwsCgHHn9FruQ" name="play_action_card">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_eYOeuGnAfsNTXXHqMDgTCw" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_LPIR5Up2Yphg3y4WXfQwXg" name="game"/>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_fj7i_fLYvf0QbY41dAfK6Q" name="play_action_card" specification="_ngjGx6lNKNwsCgHHn9FruQ">
-          <language>Python</language>
-          <body>if self.actions &lt;= 0:
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_fj7i_fLYvf0QbY41dAfK6Q" name="play_action_card" specification="_ngjGx6lNKNwsCgHHn9FruQ">
+            <language>Python</language>
+            <body>if self.actions &lt;= 0:
 	return False
 if card not in self.hand.cards:
 	return False
@@ -317,17 +255,12 @@ self.hand.cards.remove(card)
 self.playArea.cards.append(card)
 self._resolve_action_effect(card, game)
 return True</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_bfSjlyxiRv6IDWT-11t-nA" name="_reveal_top">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_qzXsCsLHQyqrZRqR4AX5bg" name="n">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_yp9thoNfR9Ky7aApVLkOwQ" name="_reveal_top" specification="_bfSjlyxiRv6IDWT-11t-nA">
-          <language>Python</language>
-          <body>"""Reveal up to n cards off the top of this player's own deck
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_yp9thoNfR9Ky7aApVLkOwQ" name="_reveal_top" specification="_bfSjlyxiRv6IDWT-11t-nA">
+            <language>Python</language>
+            <body>&quot;&quot;&quot;Reveal up to n cards off the top of this player's own deck
 (reshuffling discard in as needed), without adding them to hand.
-Used by Vassal/Sentry/Bandit-style effects."""
+Used by Vassal/Sentry/Bandit-style effects.&quot;&quot;&quot;
 import random
 revealed = []
 for _ in range(n):
@@ -344,147 +277,143 @@ for _ in range(n):
 			self.known_top_cards.pop(0)
 		revealed.append(card)
 return revealed</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_N-UUeqniS5WGVTeHmrK5GQ" name="_resolve_action_effect">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_RyAskfuDQNOnaiyhD9TsRg" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_8VdEoEe7R-iznGWJnV2D2w" name="game"/>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Iej_P7KgSdmyukTIMjq46A" name="_resolve_action_effect" specification="_N-UUeqniS5WGVTeHmrK5GQ">
-          <language>Python</language>
-          <body>"""Just the effect logic, no action-cost/hand-removal bookkeeping,
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Iej_P7KgSdmyukTIMjq46A" name="_resolve_action_effect" specification="_N-UUeqniS5WGVTeHmrK5GQ">
+            <language>Python</language>
+            <body>&quot;&quot;&quot;Just the effect logic, no action-cost/hand-removal bookkeeping,
 so Throne Room / Vassal can invoke a card's effect re-entrantly
-without re-paying its action cost or moving it again."""
+without re-paying its action cost or moving it again.&quot;&quot;&quot;
 name = card.name
 
-if name == "Village":
+if name == &quot;Village&quot;:
 	self.actions += 2
 	self.draw(1)
-elif name == "Smithy":
+elif name == &quot;Smithy&quot;:
 	self.draw(3)
-elif name == "Market":
+elif name == &quot;Market&quot;:
 	self.actions += 1
 	self.buys += 1
 	self.coins += 1
 	self.draw(1)
-elif name == "Workshop":
+elif name == &quot;Workshop&quot;:
 	candidates = game.supply.eligible_piles(4, None)
-	gain_pile = self.choose_pile_fn(candidates, "Workshop: choose a card to gain (to discard)", "workshop_gain")
+	gain_pile = self.choose_pile_fn(candidates, &quot;Workshop: choose a card to gain (to discard)&quot;, &quot;workshop_gain&quot;)
 	if gain_pile is not None:
 		gained = game.supply.take_from_pile(gain_pile)
 		self.discardPile.cards.append(gained)
-elif name == "Moat":
+elif name == &quot;Moat&quot;:
 	self.draw(2)
-elif name == "Cellar":
+elif name == &quot;Cellar&quot;:
 	self.actions += 1
 	discard_candidates = self.choose_cards_fn(list(self.hand.cards),
-	                                           "Cellar: choose any number of cards to discard", "cellar_discard", -1)
+	                                           &quot;Cellar: choose any number of cards to discard&quot;, &quot;cellar_discard&quot;, -1)
 	for c in discard_candidates:
 		self.hand.cards.remove(c)
 		self.discardPile.cards.append(c)
 	self.draw(len(discard_candidates))
-elif name == "Merchant":
+elif name == &quot;Merchant&quot;:
 	self.actions += 1
 	self.draw(1)
-elif name == "Militia":
+elif name == &quot;Militia&quot;:
 	self.coins += 2
 	for other in game.players:
 		if other is self:
 			continue
-		if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+		if any(c.name == &quot;Moat&quot; for c in other.hand.cards) and not other.declineMoatReveal:
 			continue
 		excess = len(other.hand.cards) - 3
-		if excess &gt; 0:
+		if excess > 0:
 			to_discard = other.choose_cards_fn(list(other.hand.cards),
-			                                    "Militia: choose " + str(excess) + " card(s) to discard",
-			                                    "militia_discard", excess)
+			                                    &quot;Militia: choose &quot; + str(excess) + &quot; card(s) to discard&quot;,
+			                                    &quot;militia_discard&quot;, excess)
 			for c in to_discard:
 				if c in other.hand.cards:
 					other.hand.cards.remove(c)
 					other.discardPile.cards.append(c)
-elif name == "Mine":
+elif name == &quot;Mine&quot;:
 	treasures_in_hand = [c for c in self.hand.cards if CardTypeKind.Treasure in c.types]
 	if treasures_in_hand:
-		chosen = self.choose_cards_fn(treasures_in_hand, "Mine: choose a Treasure to trash", "mine_trash", 1)
+		chosen = self.choose_cards_fn(treasures_in_hand, &quot;Mine: choose a Treasure to trash&quot;, &quot;mine_trash&quot;, 1)
 		if chosen:
 			to_trash = chosen[0]
 			candidates = game.supply.eligible_piles(to_trash.cost + 3, CardTypeKind.Treasure)
-			gain_pile = self.choose_pile_fn(candidates, "Mine: choose a Treasure to gain to hand", "mine_gain")
+			gain_pile = self.choose_pile_fn(candidates, &quot;Mine: choose a Treasure to gain to hand&quot;, &quot;mine_gain&quot;)
 			if gain_pile is not None:
 				gained = game.supply.take_from_pile(gain_pile)
 				self.hand.cards.remove(to_trash)
 				game.trash.cards.append(to_trash)
 				self.hand.cards.append(gained)
-elif name == "Remodel":
+elif name == &quot;Remodel&quot;:
 	if self.hand.cards:
-		chosen = self.choose_cards_fn(list(self.hand.cards), "Remodel: choose a card to trash", "remodel_trash", 1)
+		chosen = self.choose_cards_fn(list(self.hand.cards), &quot;Remodel: choose a card to trash&quot;, &quot;remodel_trash&quot;, 1)
 		if chosen:
 			to_trash = chosen[0]
 			candidates = game.supply.eligible_piles(to_trash.cost + 2, None)
-			gain_pile = self.choose_pile_fn(candidates, "Remodel: choose a card to gain (to discard)", "remodel_gain")
+			gain_pile = self.choose_pile_fn(candidates, &quot;Remodel: choose a card to gain (to discard)&quot;, &quot;remodel_gain&quot;)
 			if gain_pile is not None:
 				gained = game.supply.take_from_pile(gain_pile)
 				self.hand.cards.remove(to_trash)
 				game.trash.cards.append(to_trash)
 				self.discardPile.cards.append(gained)
-elif name == "Poacher":
+elif name == &quot;Poacher&quot;:
 	self.actions += 1
 	self.coins += 1
 	self.draw(1)
 	empty_piles = sum(1 for pile in game.supply.piles if pile.count &lt;= 0)
-	if empty_piles &gt; 0 and self.hand.cards:
+	if empty_piles > 0 and self.hand.cards:
 		n = min(empty_piles, len(self.hand.cards))
 		to_discard = self.choose_cards_fn(list(self.hand.cards),
-		                                   f"Poacher: discard {n} card(s) (one per empty supply pile)",
-		                                   "poacher_discard", n)
+		                                   f&quot;Poacher: discard {n} card(s) (one per empty supply pile)&quot;,
+		                                   &quot;poacher_discard&quot;, n)
 		for c in to_discard:
 			if c in self.hand.cards:
 				self.hand.cards.remove(c)
 				self.discardPile.cards.append(c)
-elif name == "Festival":
+elif name == &quot;Festival&quot;:
 	self.actions += 2
 	self.buys += 1
 	self.coins += 2
-elif name == "Laboratory":
+elif name == &quot;Laboratory&quot;:
 	self.actions += 1
 	self.draw(2)
-elif name == "Council Room":
+elif name == &quot;Council Room&quot;:
 	self.buys += 1
 	self.draw(4)
 	for other in game.players:
 		if other is not self:
 			other.draw(1)
-elif name == "Moneylender":
-	coppers = [c for c in self.hand.cards if c.name == "Copper"]
+elif name == &quot;Moneylender&quot;:
+	coppers = [c for c in self.hand.cards if c.name == &quot;Copper&quot;]
 	if coppers:
-		chosen = self.choose_cards_fn(coppers, "Moneylender: trash a Copper for +3 Coins?",
-		                               "moneylender_trash", -1)
+		chosen = self.choose_cards_fn(coppers, &quot;Moneylender: trash a Copper for +3 Coins?&quot;,
+		                               &quot;moneylender_trash&quot;, -1)
 		if chosen:
 			to_trash = chosen[0]
 			self.hand.cards.remove(to_trash)
 			game.trash.cards.append(to_trash)
 			self.coins += 3
-elif name == "Chapel":
+elif name == &quot;Chapel&quot;:
 	if self.hand.cards:
-		chosen = self.choose_cards_fn(list(self.hand.cards), "Chapel: trash up to 4 cards",
-		                               "chapel_trash", -1)
+		chosen = self.choose_cards_fn(list(self.hand.cards), &quot;Chapel: trash up to 4 cards&quot;,
+		                               &quot;chapel_trash&quot;, -1)
 		for c in chosen[:4]:
 			if c in self.hand.cards:
 				self.hand.cards.remove(c)
 				game.trash.cards.append(c)
-elif name == "Artisan":
+elif name == &quot;Artisan&quot;:
 	gain_candidates = game.supply.eligible_piles(5, None)
-	gain_pile = self.choose_pile_fn(gain_candidates, "Artisan: choose a card to gain (to hand)", "artisan_gain")
+	gain_pile = self.choose_pile_fn(gain_candidates, &quot;Artisan: choose a card to gain (to hand)&quot;, &quot;artisan_gain&quot;)
 	if gain_pile is not None:
 		gained = game.supply.take_from_pile(gain_pile)
 		self.hand.cards.append(gained)
 	if self.hand.cards:
 		chosen = self.choose_cards_fn(list(self.hand.cards),
-		                               "Artisan: put a card from hand onto your deck", "artisan_topdeck", 1)
+		                               &quot;Artisan: put a card from hand onto your deck&quot;, &quot;artisan_topdeck&quot;, 1)
 		if chosen:
 			to_topdeck = chosen[0]
 			self.hand.cards.remove(to_topdeck)
 			self.deck.cards.append(to_topdeck)
-elif name == "Library":
+elif name == &quot;Library&quot;:
 	import random
 	while len(self.hand.cards) &lt; 7:
 		if not self.deck.cards:
@@ -495,30 +424,30 @@ elif name == "Library":
 			self.discardPile.cards = []
 		drawn = self.deck.cards.pop()
 		if CardTypeKind.Action in drawn.types:
-			skip = self.choose_cards_fn([drawn], "Library: skip this drawn Action card?", "library_skip", -1)
+			skip = self.choose_cards_fn([drawn], &quot;Library: skip this drawn Action card?&quot;, &quot;library_skip&quot;, -1)
 			if skip and drawn in skip:
 				self.discardPile.cards.append(drawn)
 				continue
 		self.hand.cards.append(drawn)
-elif name == "Harbinger":
+elif name == &quot;Harbinger&quot;:
 	self.actions += 1
 	self.draw(1)
 	if self.discardPile.cards:
 		chosen = self.choose_cards_fn(list(self.discardPile.cards),
-		                               "Harbinger: put a card from discard onto your deck?",
-		                               "harbinger_topdeck", -1)
+		                               &quot;Harbinger: put a card from discard onto your deck?&quot;,
+		                               &quot;harbinger_topdeck&quot;, -1)
 		if chosen:
 			to_topdeck = chosen[0]
 			if to_topdeck in self.discardPile.cards:
 				self.discardPile.cards.remove(to_topdeck)
 				self.deck.cards.append(to_topdeck)
-elif name == "Vassal":
+elif name == &quot;Vassal&quot;:
 	self.coins += 2
 	revealed = self._reveal_top(1)
 	if revealed:
 		top = revealed[0]
 		if CardTypeKind.Action in top.types:
-			chosen = self.choose_cards_fn([top], "Vassal: play the revealed Action card?", "vassal_play", -1)
+			chosen = self.choose_cards_fn([top], &quot;Vassal: play the revealed Action card?&quot;, &quot;vassal_play&quot;, -1)
 			if chosen and top in chosen:
 				self.playArea.cards.append(top)
 				self._resolve_action_effect(top, game)
@@ -526,29 +455,29 @@ elif name == "Vassal":
 				self.discardPile.cards.append(top)
 		else:
 			self.discardPile.cards.append(top)
-elif name == "Sentry":
+elif name == &quot;Sentry&quot;:
 	self.actions += 1
 	self.draw(1)
 	revealed = self._reveal_top(2)
 	if revealed:
-		to_trash = self.choose_cards_fn(list(revealed), "Sentry: trash any of the revealed cards",
-		                                 "sentry_trash", -1)
+		to_trash = self.choose_cards_fn(list(revealed), &quot;Sentry: trash any of the revealed cards&quot;,
+		                                 &quot;sentry_trash&quot;, -1)
 		for c in to_trash:
 			if c in revealed:
 				revealed.remove(c)
 				game.trash.cards.append(c)
 	if revealed:
 		to_discard = self.choose_cards_fn(list(revealed),
-		                                   "Sentry: discard any of the remaining revealed cards",
-		                                   "sentry_discard", -1)
+		                                   &quot;Sentry: discard any of the remaining revealed cards&quot;,
+		                                   &quot;sentry_discard&quot;, -1)
 		for c in to_discard:
 			if c in revealed:
 				revealed.remove(c)
 				self.discardPile.cards.append(c)
 	if revealed:
 		order = self.choose_cards_fn(list(revealed),
-		                              "Sentry: choose card(s) to keep on top (rest go beneath, in order)",
-		                              "sentry_reorder", -1)
+		                              &quot;Sentry: choose card(s) to keep on top (rest go beneath, in order)&quot;,
+		                              &quot;sentry_reorder&quot;, -1)
 		chosen_ids = {id(c) for c in order} if order else set()
 		top_group = [c for c in order if id(c) in chosen_ids] if order else []
 		rest_group = [c for c in revealed if id(c) not in chosen_ids]
@@ -559,54 +488,54 @@ elif name == "Sentry":
 		# rest_group+top_group were just revealed to everyone and are
 		# now back on top, soonest-drawn (top_group's last entry) first.
 		self.known_top_cards = list(reversed(rest_group + top_group))
-elif name == "Witch":
+elif name == &quot;Witch&quot;:
 	self.draw(2)
 	for other in game.players:
 		if other is self:
 			continue
-		if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+		if any(c.name == &quot;Moat&quot; for c in other.hand.cards) and not other.declineMoatReveal:
 			continue
-		curse_piles = [pl for pl in game.supply.piles if pl.cardType.name == "Curse" and pl.count &gt; 0]
+		curse_piles = [pl for pl in game.supply.piles if pl.cardType.name == &quot;Curse&quot; and pl.count > 0]
 		if curse_piles:
 			gained = game.supply.take_from_pile(curse_piles[0])
 			other.discardPile.cards.append(gained)
-elif name == "Bureaucrat":
-	silver_piles = [pl for pl in game.supply.piles if pl.cardType.name == "Silver" and pl.count &gt; 0]
+elif name == &quot;Bureaucrat&quot;:
+	silver_piles = [pl for pl in game.supply.piles if pl.cardType.name == &quot;Silver&quot; and pl.count > 0]
 	if silver_piles:
 		gained = game.supply.take_from_pile(silver_piles[0])
 		self.deck.cards.append(gained)
 	for other in game.players:
 		if other is self:
 			continue
-		if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+		if any(c.name == &quot;Moat&quot; for c in other.hand.cards) and not other.declineMoatReveal:
 			continue
 		victory_cards = [c for c in other.hand.cards if CardTypeKind.Victory in c.types]
 		if victory_cards:
 			chosen = other.choose_cards_fn(victory_cards,
-			                                "Bureaucrat: choose a Victory card to put on top of your deck",
-			                                "bureaucrat_topdeck", 1)
+			                                &quot;Bureaucrat: choose a Victory card to put on top of your deck&quot;,
+			                                &quot;bureaucrat_topdeck&quot;, 1)
 			if chosen:
 				to_topdeck = chosen[0]
 				if to_topdeck in other.hand.cards:
 					other.hand.cards.remove(to_topdeck)
 					other.deck.cards.append(to_topdeck)
-elif name == "Bandit":
-	gold_piles = [pl for pl in game.supply.piles if pl.cardType.name == "Gold" and pl.count &gt; 0]
+elif name == &quot;Bandit&quot;:
+	gold_piles = [pl for pl in game.supply.piles if pl.cardType.name == &quot;Gold&quot; and pl.count > 0]
 	if gold_piles:
 		gained = game.supply.take_from_pile(gold_piles[0])
 		self.discardPile.cards.append(gained)
 	for other in game.players:
 		if other is self:
 			continue
-		if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+		if any(c.name == &quot;Moat&quot; for c in other.hand.cards) and not other.declineMoatReveal:
 			continue
 		revealed = other._reveal_top(2)
-		eligible = [c for c in revealed if CardTypeKind.Treasure in c.types and c.name != "Copper"]
+		eligible = [c for c in revealed if CardTypeKind.Treasure in c.types and c.name != &quot;Copper&quot;]
 		to_trash = None
 		if len(eligible) == 1:
 			to_trash = eligible[0]
-		elif len(eligible) &gt; 1:
-			chosen = other.choose_cards_fn(eligible, "Bandit: choose a Treasure to trash", "bandit_trash", 1)
+		elif len(eligible) > 1:
+			chosen = other.choose_cards_fn(eligible, &quot;Bandit: choose a Treasure to trash&quot;, &quot;bandit_trash&quot;, 1)
 			if chosen:
 				to_trash = chosen[0]
 		for c in revealed:
@@ -614,39 +543,35 @@ elif name == "Bandit":
 				game.trash.cards.append(c)
 			else:
 				other.discardPile.cards.append(c)
-elif name == "Throne Room":
+elif name == &quot;Throne Room&quot;:
 	action_cards_in_hand = [c for c in self.hand.cards if CardTypeKind.Action in c.types]
 	if action_cards_in_hand:
 		target = self.choose_action_fn(action_cards_in_hand,
-		                                "Throne Room: choose an action card to play twice",
-		                                "throne_room_target")
+		                                &quot;Throne Room: choose an action card to play twice&quot;,
+		                                &quot;throne_room_target&quot;)
 		if target is not None and target in self.hand.cards:
 			self.hand.cards.remove(target)
 			self.playArea.cards.append(target)
 			self._resolve_action_effect(target, game)
 			self._resolve_action_effect(target, game)</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_j7Rz4BZfa80-rWDdGeZ50g" name="play_treasures"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_suQI_xxtqx1RtgS7bgKJwA" name="play_treasures" specification="_j7Rz4BZfa80-rWDdGeZ50g">
-          <language>Python</language>
-          <body>treasures = [c for c in self.hand.cards if CardTypeKind.Treasure in c.types]
-merchants_in_play = sum(1 for c in self.playArea.cards if c.name == "Merchant")
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_suQI_xxtqx1RtgS7bgKJwA" name="play_treasures" specification="_j7Rz4BZfa80-rWDdGeZ50g">
+            <language>Python</language>
+            <body>treasures = [c for c in self.hand.cards if CardTypeKind.Treasure in c.types]
+merchants_in_play = sum(1 for c in self.playArea.cards if c.name == &quot;Merchant&quot;)
 for card in treasures:
 	if card.treasureFacet is not None:
 		self.coins += card.treasureFacet.coinValue
-	if card.name == "Silver" and not self.silverPlayedThisTurn:
+	if card.name == &quot;Silver&quot; and not self.silverPlayedThisTurn:
 		self.coins += merchants_in_play
 		self.silverPlayedThisTurn = True
 	self.hand.cards.remove(card)
 	self.playArea.cards.append(card)
 return len(treasures)</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_MuvAuQ4zHH7ZgVjGo6aQHQ" name="buy_card">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_C1QxbseUoZDIOqDfjavsLw" name="pile" type="_DbQhCcuWNPMEvA06MBVNqg"/>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_CPxJos8f_e_tPMHh1D6X4g" name="buy_card" specification="_MuvAuQ4zHH7ZgVjGo6aQHQ">
-          <language>Python</language>
-          <body>if self.buys &lt;= 0:
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_CPxJos8f_e_tPMHh1D6X4g" name="buy_card" specification="_MuvAuQ4zHH7ZgVjGo6aQHQ">
+            <language>Python</language>
+            <body>if self.buys &lt;= 0:
 	return False
 if pile.count &lt;= 0:
 	return False
@@ -657,11 +582,10 @@ self.coins -= pile.cardType.cost
 pile.count -= 1
 self.discardPile.cards.append(pile.cardType.clone())
 return True</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_xcM3uHZiMfyiHBox1RVoTg" name="end_turn"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Mh-r-ajYJraM0O_Lq5PtJw" name="end_turn" specification="_xcM3uHZiMfyiHBox1RVoTg">
-          <language>Python</language>
-          <body>self.discardPile.cards.extend(self.hand.cards)
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Mh-r-ajYJraM0O_Lq5PtJw" name="end_turn" specification="_xcM3uHZiMfyiHBox1RVoTg">
+            <language>Python</language>
+            <body>self.discardPile.cards.extend(self.hand.cards)
 self.hand.cards = []
 self.discardPile.cards.extend(self.playArea.cards)
 self.playArea.cards = []
@@ -670,11 +594,10 @@ self.actions = 1
 self.buys = 1
 self.coins = 0
 self.silverPlayedThisTurn = False</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_aNfj3Kkt9QdzoIw5aJRFRA" name="calculate_score"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_MqpeBFQKTiK1pl5Yj2yJkg" name="calculate_score" specification="_aNfj3Kkt9QdzoIw5aJRFRA">
-          <language>Python</language>
-          <body>from ..rl.card_constants import COMPUTED_VALUE_VICTORY_CARDS
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_MqpeBFQKTiK1pl5Yj2yJkg" name="calculate_score" specification="_aNfj3Kkt9QdzoIw5aJRFRA">
+            <language>Python</language>
+            <body>from ..rl.card_constants import COMPUTED_VALUE_VICTORY_CARDS
 all_cards = self.deck.cards + self.hand.cards + self.discardPile.cards + self.playArea.cards
 owned_card_count = len(all_cards)
 total = 0
@@ -686,28 +609,100 @@ for c in all_cards:
 		else:
 			total += c.victoryFacet.victoryPoints
 return total</body>
-        </ownedBehavior>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_DbQhCcuWNPMEvA06MBVNqg" name="SupplyPile">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_uTzhu1TZ--q_TxOu5pn-4Q" name="cardType" type="_Fynj5aSoWLHppjotMxbJow"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_xqb7Y2B28Xzh_UnNhqYBRg" name="count">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedAttribute>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_O1jQtW8edQ3_lkcl7ldbzw" name="Supply">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_HE14stOTNxq1_iQ7HLkTaw" name="piles" type="_DbQhCcuWNPMEvA06MBVNqg" aggregation="composite">
-          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QR8t92mEGomiGHFnkju1dg" value="1"/>
-          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_3dQQKvOWn8g8dgcPJdp67g" value="*"/>
-        </ownedAttribute>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_B1Yjt1tZcsYYJdByaG1Ktg" name="gain_card_up_to">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_pkV-0Rz8tXoOjgtgg-oRPA" name="max_cost">
+          </ownedBehavior>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_9jaTq0-1M4RC3dXjE5LpfQ" name="draw" method="_wj_cyO2Yn-MZLdkuUlP0Mw">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_W7e72RQctgfRN8coAZgKnQ" name="n">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+            </ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_fkmcfJeYSayeD7CcWrAHAw" name="_is_junk_to_trash" method="_vudtdrf_TVaZyyxnbggKEg">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_7kV7xnpvQY-T0HL3VYhYRQ" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_PS9CRJWiNxra3aZHuwLf-A" name="ai_choose_cards" method="_Yptr3QRxN6Ke6kFkff2Rzg">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_bPApZUMvaD7CFBVKLB_RIg" name="candidates" type="_Fynj5aSoWLHppjotMxbJow">
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_bPApZUMvaD7CFBVKLB_RIgL"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_bPApZUMvaD7CFBVKLB_RIgU" value="*"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_hUOjPB4ZOZ4RRCJrm06Dbg" name="prompt">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_KA3-DH1_60t3SC8JDW8s4A" name="context">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_hBXAWrc_hTPYHjaXgVQyqg" name="count">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+            </ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_1yCxz1HtHgiy7RKNzZZ9eg" name="ai_choose_pile" method="_E9jABuX0HRQw_Z7YQeqTzQ">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_5OqTyD6DYj4Yn2JWa9YomQ" name="candidates" type="_DbQhCcuWNPMEvA06MBVNqg">
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_5OqTyD6DYj4Yn2JWa9YomQL"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_5OqTyD6DYj4Yn2JWa9YomQU" value="*"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_w3v2P5qSO5D6NpOJRgCaSg" name="prompt">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_qzpA4oir_MH4b7K0-fCP0A" name="context">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            </ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_xRUUqk-YQi-flH2pedpb3A" name="ai_choose_action" method="_I8Gjpqv6SJm1nXV9ZYpTog">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_n5GGnj35QviRGXgCbZF6dQ" name="candidates" type="_Fynj5aSoWLHppjotMxbJow">
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_n5GGnj35QviRGXgCbZF6dQL"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_n5GGnj35QviRGXgCbZF6dQU" value="*"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_7RtKwqZMS9C275i6m2xb_Q" name="prompt">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_UVCdLikvQPKH0QFN2P8GHg" name="context">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            </ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_MtsNwGBsSIiE8pYqpLtYyw" name="ai_choose_buy" method="_UVs4P7ISQnuzlrCZ3WzQ8A">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_fLQgnXQ-QhuurWsNtk1olw" name="candidates" type="_DbQhCcuWNPMEvA06MBVNqg">
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_fLQgnXQ-QhuurWsNtk1olwL"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fLQgnXQ-QhuurWsNtk1olwU" value="*"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_dXZqOe2ASdeOyVDClzqkYA" name="prompt">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_n9r1P-3nQwSSUa5RIETMyA" name="context">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+            </ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_ngjGx6lNKNwsCgHHn9FruQ" name="play_action_card" method="_fj7i_fLYvf0QbY41dAfK6Q">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_eYOeuGnAfsNTXXHqMDgTCw" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_LPIR5Up2Yphg3y4WXfQwXg" name="game"/>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_bfSjlyxiRv6IDWT-11t-nA" name="_reveal_top" method="_yp9thoNfR9Ky7aApVLkOwQ">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_qzXsCsLHQyqrZRqR4AX5bg" name="n">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+            </ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_N-UUeqniS5WGVTeHmrK5GQ" name="_resolve_action_effect" method="_Iej_P7KgSdmyukTIMjq46A">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_RyAskfuDQNOnaiyhD9TsRg" name="card" type="_Fynj5aSoWLHppjotMxbJow"/>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_8VdEoEe7R-iznGWJnV2D2w" name="game"/>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_j7Rz4BZfa80-rWDdGeZ50g" name="play_treasures" method="_suQI_xxtqx1RtgS7bgKJwA"/>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_MuvAuQ4zHH7ZgVjGo6aQHQ" name="buy_card" method="_CPxJos8f_e_tPMHh1D6X4g">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_C1QxbseUoZDIOqDfjavsLw" name="pile" type="_DbQhCcuWNPMEvA06MBVNqg"/>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_xcM3uHZiMfyiHBox1RVoTg" name="end_turn" method="_Mh-r-ajYJraM0O_Lq5PtJw"/>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_aNfj3Kkt9QdzoIw5aJRFRA" name="calculate_score" method="_MqpeBFQKTiK1pl5Yj2yJkg"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_DbQhCcuWNPMEvA06MBVNqg" name="SupplyPile">
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_uTzhu1TZ--q_TxOu5pn-4Q" name="cardType" type="_Fynj5aSoWLHppjotMxbJow"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_xqb7Y2B28Xzh_UnNhqYBRg" name="count">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_q_V-DUuO0GZFNzWg7oEJZQ" name="required_type" type="_wFkAiHOPlb3V4ThmZAl6yg"/>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_bK2v0Ff5nsUJvV8pTQqM8g" name="gain_card_up_to" specification="_B1Yjt1tZcsYYJdByaG1Ktg">
-          <language>Python</language>
-          <body>candidates = [p for p in self.piles if p.count &gt; 0 and p.cardType.cost &lt;= max_cost]
+          </ownedAttribute>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_O1jQtW8edQ3_lkcl7ldbzw" name="Supply">
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_HE14stOTNxq1_iQ7HLkTaw" name="piles" type="_DbQhCcuWNPMEvA06MBVNqg" aggregation="composite">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QR8t92mEGomiGHFnkju1dg" value="1"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_3dQQKvOWn8g8dgcPJdp67g" value="*"/>
+          </ownedAttribute>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_bK2v0Ff5nsUJvV8pTQqM8g" name="gain_card_up_to" specification="_B1Yjt1tZcsYYJdByaG1Ktg">
+            <language>Python</language>
+            <body>candidates = [p for p in self.piles if p.count > 0 and p.cardType.cost &lt;= max_cost]
 if required_type is not None:
     candidates = [p for p in candidates if required_type in p.cardType.types]
 if not candidates:
@@ -715,59 +710,60 @@ if not candidates:
 best = max(candidates, key=lambda p: p.cardType.cost)
 best.count -= 1
 return best.cardType.clone()</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="__l-y_AVNUxtNKhbr5ccEtA" name="eligible_piles">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_t-CfVohkjQ_HktmWQmdGiQ" name="max_cost">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_M8DfKP0D_lU48Ri_Zkariw" name="required_type" type="_wFkAiHOPlb3V4ThmZAl6yg"/>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_EQOWFqxqend0Zgbi_si__A" name="eligible_piles" specification="__l-y_AVNUxtNKhbr5ccEtA">
-          <language>Python</language>
-          <body>candidates = [p for p in self.piles if p.count &gt; 0 and p.cardType.cost &lt;= max_cost]
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_EQOWFqxqend0Zgbi_si__A" name="eligible_piles" specification="__l-y_AVNUxtNKhbr5ccEtA">
+            <language>Python</language>
+            <body>candidates = [p for p in self.piles if p.count > 0 and p.cardType.cost &lt;= max_cost]
 if required_type is not None:
     candidates = [p for p in candidates if required_type in p.cardType.types]
 return candidates</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_NOD-uvEEsEZLZBVdAy9iZg" name="take_from_pile">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_ZGhuGkhYcMEXXAu6LjqccA" name="pile" type="_DbQhCcuWNPMEvA06MBVNqg"/>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Mi9ulp9pn9Z2VnvftAYIBg" name="take_from_pile" specification="_NOD-uvEEsEZLZBVdAy9iZg">
-          <language>Python</language>
-          <body>pile.count -= 1
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Mi9ulp9pn9Z2VnvftAYIBg" name="take_from_pile" specification="_NOD-uvEEsEZLZBVdAy9iZg">
+            <language>Python</language>
+            <body>pile.count -= 1
 return pile.cardType.clone()</body>
-        </ownedBehavior>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_fafwyzeBq2t5E502cWikzQ" name="Game">
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_yBYi45IHRV-snhvxDO6U4A" importedElement="_DbQhCcuWNPMEvA06MBVNqg"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_Ta9wQJ76QMuEkwJaKGwAMw" importedElement="_s12wjtrKijp5JJZYh0SxaQ"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_QlumqmiCTC2T0ptSIoM2kw" importedElement="_GUZ3ZTG7vVXP0BOD63cd7Q"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_m5bMYItVSpe1uwb0Q9GIIA" importedElement="_ahb-e1fIB40_5W24NayBoA"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_35YIjnU4Q0aDsVIQBwG-bA" importedElement="_Z9xafxONEplNp9awDSbIww"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_u3ItQ9bEwS9j2fWw5CL9kA" name="players" type="_djIVjnlCztUpPVVgfj8sHQ" aggregation="composite">
-          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pmdSUPkxWBrOErlypjHReQ" value="2"/>
-          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_gSRCtost5yYfoANthQQLsw" value="4"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_pFc_qQcuID4dXHFonE7ktA" name="supply" type="_O1jQtW8edQ3_lkcl7ldbzw" aggregation="composite"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_fp_-gF9L78teuwX8j2kaww" name="trash" type="_b5KMSunHdn9OK3mXn2JKZg" aggregation="composite"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_G41VZ0-rkZfzlrBKi04KKw" name="expansion" type="_ln9MZ6CNmxIRor4mjjh2lQ" aggregation="composite"/>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_BIDYxkcetdT7g2pYAho-0g" name="setup">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_nDU3GKFrWebBdVksqMvCPA" name="num_players">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_t50mtAPyqaRyy2-Q_LnpyA" name="setup" specification="_BIDYxkcetdT7g2pYAho-0g">
-          <language>Python</language>
-          <body>import random
+          </ownedBehavior>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_B1Yjt1tZcsYYJdByaG1Ktg" name="gain_card_up_to" method="_bK2v0Ff5nsUJvV8pTQqM8g">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_pkV-0Rz8tXoOjgtgg-oRPA" name="max_cost">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_q_V-DUuO0GZFNzWg7oEJZQ" name="required_type" type="_wFkAiHOPlb3V4ThmZAl6yg"/>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="__l-y_AVNUxtNKhbr5ccEtA" name="eligible_piles" method="_EQOWFqxqend0Zgbi_si__A">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_t-CfVohkjQ_HktmWQmdGiQ" name="max_cost">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+            </ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_M8DfKP0D_lU48Ri_Zkariw" name="required_type" type="_wFkAiHOPlb3V4ThmZAl6yg"/>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_NOD-uvEEsEZLZBVdAy9iZg" name="take_from_pile" method="_Mi9ulp9pn9Z2VnvftAYIBg">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_ZGhuGkhYcMEXXAu6LjqccA" name="pile" type="_DbQhCcuWNPMEvA06MBVNqg"/>
+          </ownedOperation>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_fafwyzeBq2t5E502cWikzQ" name="Game">
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_yBYi45IHRV-snhvxDO6U4A" importedElement="_DbQhCcuWNPMEvA06MBVNqg"/>
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_Ta9wQJ76QMuEkwJaKGwAMw" importedElement="_s12wjtrKijp5JJZYh0SxaQ"/>
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_QlumqmiCTC2T0ptSIoM2kw" importedElement="_GUZ3ZTG7vVXP0BOD63cd7Q"/>
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_m5bMYItVSpe1uwb0Q9GIIA" importedElement="_ahb-e1fIB40_5W24NayBoA"/>
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_35YIjnU4Q0aDsVIQBwG-bA" importedElement="_Z9xafxONEplNp9awDSbIww"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_u3ItQ9bEwS9j2fWw5CL9kA" name="players" type="_djIVjnlCztUpPVVgfj8sHQ" aggregation="composite">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pmdSUPkxWBrOErlypjHReQ" value="2"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_gSRCtost5yYfoANthQQLsw" value="4"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_pFc_qQcuID4dXHFonE7ktA" name="supply" type="_O1jQtW8edQ3_lkcl7ldbzw" aggregation="composite"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_fp_-gF9L78teuwX8j2kaww" name="trash" type="_b5KMSunHdn9OK3mXn2JKZg" aggregation="composite"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_G41VZ0-rkZfzlrBKi04KKw" name="expansion" type="_ln9MZ6CNmxIRor4mjjh2lQ" aggregation="composite"/>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_t50mtAPyqaRyy2-Q_LnpyA" name="setup" specification="_BIDYxkcetdT7g2pYAho-0g">
+            <language>Python</language>
+            <body>import random
 
 basic_cards = self.expansion.basic_cards()
-copper = basic_cards["Copper"]
-silver = basic_cards["Silver"]
-gold = basic_cards["Gold"]
-estate = basic_cards["Estate"]
-duchy = basic_cards["Duchy"]
-province = basic_cards["Province"]
-curse = basic_cards["Curse"]
+copper = basic_cards[&quot;Copper&quot;]
+silver = basic_cards[&quot;Silver&quot;]
+gold = basic_cards[&quot;Gold&quot;]
+estate = basic_cards[&quot;Estate&quot;]
+duchy = basic_cards[&quot;Duchy&quot;]
+province = basic_cards[&quot;Province&quot;]
+curse = basic_cards[&quot;Curse&quot;]
 
 self.supply = Supply()
 self.supply.piles = []
@@ -787,7 +783,7 @@ all_kingdom_cards = self.expansion.all_kingdom_cards()
 # need to change. Set game.kingdom_card_names before calling setup()
 # to force a specific 10-card kingdom (e.g. one of BaseExpansion's
 # recommended presets); leave it unset for a random 10-of-26 draw.
-kingdom_card_names = getattr(self, "kingdom_card_names", None)
+kingdom_card_names = getattr(self, &quot;kingdom_card_names&quot;, None)
 if kingdom_card_names is not None:
     by_name = {c.name: c for c in all_kingdom_cards}
     chosen_cards = [by_name[n] for n in kingdom_card_names]
@@ -825,28 +821,32 @@ for i in range(num_players):
     random.shuffle(p.deck.cards)
     p.end_turn()
     self.players.append(p)</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_MBK751_bJH7znl_yl8V30w" name="is_over"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_HR04bFk2zWdLXmLduta-VA" name="is_over" specification="_MBK751_bJH7znl_yl8V30w">
-          <language>Python</language>
-          <body>for pile in self.supply.piles:
-    if pile.cardType.name == "Province" and pile.count &lt;= 0:
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_HR04bFk2zWdLXmLduta-VA" name="is_over" specification="_MBK751_bJH7znl_yl8V30w">
+            <language>Python</language>
+            <body>for pile in self.supply.piles:
+    if pile.cardType.name == &quot;Province&quot; and pile.count &lt;= 0:
         return True
 empty_piles = sum(1 for pile in self.supply.piles if pile.count &lt;= 0)
-return empty_piles &gt;= 3</body>
-        </ownedBehavior>
+return empty_piles >= 3</body>
+          </ownedBehavior>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_BIDYxkcetdT7g2pYAho-0g" name="setup" method="_t50mtAPyqaRyy2-Q_LnpyA">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="_nDU3GKFrWebBdVksqMvCPA" name="num_players">
+              <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+            </ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_MBK751_bJH7znl_yl8V30w" name="is_over" method="_HR04bFk2zWdLXmLduta-VA"/>
+        </packagedElement>
       </packagedElement>
-    </packagedElement>
-    <packagedElement xmi:type="uml:Package" xmi:id="_Df64SrFXIeHT3-WSUBR2jw" name="Expansions">
-      <packagedElement xmi:type="uml:Class" xmi:id="_ln9MZ6CNmxIRor4mjjh2lQ" name="BaseExpansion">
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_pDqXBsRgoJhhn6mebEalhA" importedElement="_Fynj5aSoWLHppjotMxbJow"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_TXeZaFhmNjX6uv8za65ffQ" importedElement="_wFkAiHOPlb3V4ThmZAl6yg"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_b6Oh0sUEqQlZzkWm-FdO7A" importedElement="_RUuVfBSdZzB6WO5g4SKf1Q"/>
-        <elementImport xmi:type="uml:ElementImport" xmi:id="_-PtsEq5OsftGKE0BZPCFNw" importedElement="_v2r_z3vMRwYxbZeNt9ZZew"/>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_4sqafMGfjMj9c8-2-xhi5w" name="basic_cards"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_FrM-hCUgBsFEMbg8FAdfPw" name="basic_cards" specification="_4sqafMGfjMj9c8-2-xhi5w">
-          <language>Python</language>
-          <body>def make_treasure(name, cost, value):
+      <packagedElement xmi:type="uml:Package" xmi:id="_Df64SrFXIeHT3-WSUBR2jw" name="Expansions">
+        <packagedElement xmi:type="uml:Class" xmi:id="_ln9MZ6CNmxIRor4mjjh2lQ" name="BaseExpansion">
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_pDqXBsRgoJhhn6mebEalhA" importedElement="_Fynj5aSoWLHppjotMxbJow"/>
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_TXeZaFhmNjX6uv8za65ffQ" importedElement="_wFkAiHOPlb3V4ThmZAl6yg"/>
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_b6Oh0sUEqQlZzkWm-FdO7A" importedElement="_RUuVfBSdZzB6WO5g4SKf1Q"/>
+          <elementImport xmi:type="uml:ElementImport" xmi:id="_-PtsEq5OsftGKE0BZPCFNw" importedElement="_v2r_z3vMRwYxbZeNt9ZZew"/>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_FrM-hCUgBsFEMbg8FAdfPw" name="basic_cards" specification="_4sqafMGfjMj9c8-2-xhi5w">
+            <language>Python</language>
+            <body>def make_treasure(name, cost, value):
     c = Card()
     c.name = name
     c.cost = cost
@@ -866,7 +866,7 @@ def make_victory(name, cost, points):
 
 def make_curse():
     c = Card()
-    c.name = "Curse"
+    c.name = &quot;Curse&quot;
     c.cost = 0
     c.types = [CardTypeKind.Curse]
     c.victoryFacet = VictoryFacet()
@@ -874,19 +874,18 @@ def make_curse():
     return c
 
 return {
-    "Copper": make_treasure("Copper", 0, 1),
-    "Silver": make_treasure("Silver", 3, 2),
-    "Gold": make_treasure("Gold", 6, 3),
-    "Estate": make_victory("Estate", 2, 1),
-    "Duchy": make_victory("Duchy", 5, 3),
-    "Province": make_victory("Province", 8, 6),
-    "Curse": make_curse(),
+    &quot;Copper&quot;: make_treasure(&quot;Copper&quot;, 0, 1),
+    &quot;Silver&quot;: make_treasure(&quot;Silver&quot;, 3, 2),
+    &quot;Gold&quot;: make_treasure(&quot;Gold&quot;, 6, 3),
+    &quot;Estate&quot;: make_victory(&quot;Estate&quot;, 2, 1),
+    &quot;Duchy&quot;: make_victory(&quot;Duchy&quot;, 5, 3),
+    &quot;Province&quot;: make_victory(&quot;Province&quot;, 8, 6),
+    &quot;Curse&quot;: make_curse(),
 }</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_kG2wd54gJ8h1NqliBeYYTw" name="all_kingdom_cards"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Een8HAOjLMsfk6RbxbbJgQ" name="all_kingdom_cards" specification="_kG2wd54gJ8h1NqliBeYYTw">
-          <language>Python</language>
-          <body>def make_action(name, cost, extra_types=None):
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Een8HAOjLMsfk6RbxbbJgQ" name="all_kingdom_cards" specification="_kG2wd54gJ8h1NqliBeYYTw">
+            <language>Python</language>
+            <body>def make_action(name, cost, extra_types=None):
     c = Card()
     c.name = name
     c.cost = cost
@@ -902,209 +901,221 @@ def make_victory(name, cost, points):
     c.victoryFacet.victoryPoints = points
     return c
 
-village = make_action("Village", 3)
-smithy = make_action("Smithy", 4)
-market = make_action("Market", 5)
-workshop = make_action("Workshop", 3)
-moat = make_action("Moat", 2, [CardTypeKind.Reaction])
-cellar = make_action("Cellar", 2)
-merchant = make_action("Merchant", 3)
-militia = make_action("Militia", 4, [CardTypeKind.Attack])
-mine = make_action("Mine", 5)
-remodel = make_action("Remodel", 4)
-poacher = make_action("Poacher", 4)
-festival = make_action("Festival", 5)
-laboratory = make_action("Laboratory", 5)
-council_room = make_action("Council Room", 5)
-moneylender = make_action("Moneylender", 4)
-chapel = make_action("Chapel", 2)
-artisan = make_action("Artisan", 6)
-library = make_action("Library", 5)
-harbinger = make_action("Harbinger", 3)
-vassal = make_action("Vassal", 3)
-sentry = make_action("Sentry", 5)
-witch = make_action("Witch", 5, [CardTypeKind.Attack])
-bureaucrat = make_action("Bureaucrat", 4, [CardTypeKind.Attack])
-bandit = make_action("Bandit", 5, [CardTypeKind.Attack])
-throne_room = make_action("Throne Room", 4)
+village = make_action(&quot;Village&quot;, 3)
+smithy = make_action(&quot;Smithy&quot;, 4)
+market = make_action(&quot;Market&quot;, 5)
+workshop = make_action(&quot;Workshop&quot;, 3)
+moat = make_action(&quot;Moat&quot;, 2, [CardTypeKind.Reaction])
+cellar = make_action(&quot;Cellar&quot;, 2)
+merchant = make_action(&quot;Merchant&quot;, 3)
+militia = make_action(&quot;Militia&quot;, 4, [CardTypeKind.Attack])
+mine = make_action(&quot;Mine&quot;, 5)
+remodel = make_action(&quot;Remodel&quot;, 4)
+poacher = make_action(&quot;Poacher&quot;, 4)
+festival = make_action(&quot;Festival&quot;, 5)
+laboratory = make_action(&quot;Laboratory&quot;, 5)
+council_room = make_action(&quot;Council Room&quot;, 5)
+moneylender = make_action(&quot;Moneylender&quot;, 4)
+chapel = make_action(&quot;Chapel&quot;, 2)
+artisan = make_action(&quot;Artisan&quot;, 6)
+library = make_action(&quot;Library&quot;, 5)
+harbinger = make_action(&quot;Harbinger&quot;, 3)
+vassal = make_action(&quot;Vassal&quot;, 3)
+sentry = make_action(&quot;Sentry&quot;, 5)
+witch = make_action(&quot;Witch&quot;, 5, [CardTypeKind.Attack])
+bureaucrat = make_action(&quot;Bureaucrat&quot;, 4, [CardTypeKind.Attack])
+bandit = make_action(&quot;Bandit&quot;, 5, [CardTypeKind.Attack])
+throne_room = make_action(&quot;Throne Room&quot;, 4)
 # Gardens' real VP is computed dynamically from deck size (see
 # dominion.rl.card_constants.COMPUTED_VALUE_VICTORY_CARDS) -- the
 # static victoryPoints=0 here is just a placeholder, never read.
-gardens = make_victory("Gardens", 4, 0)
+gardens = make_victory(&quot;Gardens&quot;, 4, 0)
 
 return [village, smithy, market, workshop, moat, cellar, merchant, militia, mine, remodel,
         poacher, festival, laboratory, council_room, moneylender, chapel, artisan, library,
         harbinger, vassal, sentry, witch, bureaucrat, bandit, throne_room, gardens]</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_idGCl5JpE7QpYdfPtC1h8A" name="kingdom_card_names"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Np0SEmcUV3to3_6zUBX4Mw" name="kingdom_card_names" specification="_idGCl5JpE7QpYdfPtC1h8A">
-          <language>Python</language>
-          <body>return [c.name for c in self.all_kingdom_cards()]</body>
-        </ownedBehavior>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_JhNLvfAxr4FsDSreC-aZMw" name="recommended_kingdoms"/>
-        <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_984zbUOhbKwr71AC_hEMHg" name="recommended_kingdoms" specification="_JhNLvfAxr4FsDSreC-aZMw">
-          <language>Python</language>
-          <body>return {
-    "First Game": ["Cellar", "Market", "Merchant", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Workshop"],
-    "Size Distortion": ["Artisan", "Bandit", "Bureaucrat", "Chapel", "Festival", "Gardens", "Sentry", "Throne Room", "Witch", "Workshop"],
-    "Deck Top": ["Artisan", "Bureaucrat", "Council Room", "Festival", "Harbinger", "Laboratory", "Moneylender", "Sentry", "Vassal", "Village"],
-    "Sleight of Hand": ["Cellar", "Council Room", "Festival", "Gardens", "Harbinger", "Library", "Militia", "Poacher", "Smithy", "Throne Room"],
-    "Improvements": ["Artisan", "Cellar", "Market", "Merchant", "Mine", "Moat", "Moneylender", "Poacher", "Remodel", "Witch"],
-    "Silver &amp; Gold": ["Bandit", "Bureaucrat", "Chapel", "Harbinger", "Laboratory", "Merchant", "Mine", "Moneylender", "Throne Room", "Vassal"],
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_Np0SEmcUV3to3_6zUBX4Mw" name="kingdom_card_names" specification="_idGCl5JpE7QpYdfPtC1h8A">
+            <language>Python</language>
+            <body>return [c.name for c in self.all_kingdom_cards()]</body>
+          </ownedBehavior>
+          <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_984zbUOhbKwr71AC_hEMHg" name="recommended_kingdoms" specification="_JhNLvfAxr4FsDSreC-aZMw">
+            <language>Python</language>
+            <body>return {
+    &quot;First Game&quot;: [&quot;Cellar&quot;, &quot;Market&quot;, &quot;Merchant&quot;, &quot;Militia&quot;, &quot;Mine&quot;, &quot;Moat&quot;, &quot;Remodel&quot;, &quot;Smithy&quot;, &quot;Village&quot;, &quot;Workshop&quot;],
+    &quot;Size Distortion&quot;: [&quot;Artisan&quot;, &quot;Bandit&quot;, &quot;Bureaucrat&quot;, &quot;Chapel&quot;, &quot;Festival&quot;, &quot;Gardens&quot;, &quot;Sentry&quot;, &quot;Throne Room&quot;, &quot;Witch&quot;, &quot;Workshop&quot;],
+    &quot;Deck Top&quot;: [&quot;Artisan&quot;, &quot;Bureaucrat&quot;, &quot;Council Room&quot;, &quot;Festival&quot;, &quot;Harbinger&quot;, &quot;Laboratory&quot;, &quot;Moneylender&quot;, &quot;Sentry&quot;, &quot;Vassal&quot;, &quot;Village&quot;],
+    &quot;Sleight of Hand&quot;: [&quot;Cellar&quot;, &quot;Council Room&quot;, &quot;Festival&quot;, &quot;Gardens&quot;, &quot;Harbinger&quot;, &quot;Library&quot;, &quot;Militia&quot;, &quot;Poacher&quot;, &quot;Smithy&quot;, &quot;Throne Room&quot;],
+    &quot;Improvements&quot;: [&quot;Artisan&quot;, &quot;Cellar&quot;, &quot;Market&quot;, &quot;Merchant&quot;, &quot;Mine&quot;, &quot;Moat&quot;, &quot;Moneylender&quot;, &quot;Poacher&quot;, &quot;Remodel&quot;, &quot;Witch&quot;],
+    &quot;Silver &amp; Gold&quot;: [&quot;Bandit&quot;, &quot;Bureaucrat&quot;, &quot;Chapel&quot;, &quot;Harbinger&quot;, &quot;Laboratory&quot;, &quot;Merchant&quot;, &quot;Mine&quot;, &quot;Moneylender&quot;, &quot;Throne Room&quot;, &quot;Vassal&quot;],
 }</body>
-        </ownedBehavior>
+          </ownedBehavior>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_4sqafMGfjMj9c8-2-xhi5w" name="basic_cards" method="_FrM-hCUgBsFEMbg8FAdfPw"/>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_kG2wd54gJ8h1NqliBeYYTw" name="all_kingdom_cards" method="_Een8HAOjLMsfk6RbxbbJgQ"/>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_idGCl5JpE7QpYdfPtC1h8A" name="kingdom_card_names" method="_Np0SEmcUV3to3_6zUBX4Mw"/>
+          <ownedOperation xmi:type="uml:Operation" xmi:id="_JhNLvfAxr4FsDSreC-aZMw" name="recommended_kingdoms" method="_984zbUOhbKwr71AC_hEMHg"/>
+        </packagedElement>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_2OMznu2wureO3HLNUg6TcQ" name="Behavior">
+        <packagedElement xmi:type="uml:Activity" xmi:id="_0jncHm4zeSb8WS4cNDg5Nw" name="ActionPhase">
+          <edge xmi:type="uml:ControlFlow" xmi:id="_9DWwg5bz8qywEW_He6sp8g" target="_M0ALBzi_Gezz5-Cy1wO9CA" source="_WgeFuc9yKkn3oP0g36-I4g"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_4iVqlAZem22XCF2ikUSD9Q" target="_MbUKwHk3rN3KlFsXt3OhZw" source="_M0ALBzi_Gezz5-Cy1wO9CA"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_TVzjRSqX3Yky3T2wFQLpQg" target="_W-CpjYM0Zx2c9hB--a92Iw" source="_MbUKwHk3rN3KlFsXt3OhZw">
+            <guard xmi:type="uml:LiteralString" xmi:id="_17ye3MXdDed4UEGQbJ7yTg" value="yes"/>
+          </edge>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_AUjfScxYXRouSgpRTp1i0g" target="_M0ALBzi_Gezz5-Cy1wO9CA" source="_W-CpjYM0Zx2c9hB--a92Iw"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_G4d4lh45vhqwZWuW82uovA" target="_85h6-6cH2naMSN3WA9QGiQ" source="_MbUKwHk3rN3KlFsXt3OhZw">
+            <guard xmi:type="uml:LiteralString" xmi:id="_kTYTwqOhKwA-pqckMyeJHg" value="no"/>
+          </edge>
+          <node xmi:type="uml:InitialNode" xmi:id="_WgeFuc9yKkn3oP0g36-I4g" outgoing="_9DWwg5bz8qywEW_He6sp8g"/>
+          <node xmi:type="uml:MergeNode" xmi:id="_M0ALBzi_Gezz5-Cy1wO9CA" incoming="_9DWwg5bz8qywEW_He6sp8g _AUjfScxYXRouSgpRTp1i0g" outgoing="_4iVqlAZem22XCF2ikUSD9Q"/>
+          <node xmi:type="uml:DecisionNode" xmi:id="_MbUKwHk3rN3KlFsXt3OhZw" name="Actions remaining and playable Action card in hand?" incoming="_4iVqlAZem22XCF2ikUSD9Q" outgoing="_TVzjRSqX3Yky3T2wFQLpQg _G4d4lh45vhqwZWuW82uovA"/>
+          <node xmi:type="uml:OpaqueAction" xmi:id="_W-CpjYM0Zx2c9hB--a92Iw" name="Play Action Card" incoming="_TVzjRSqX3Yky3T2wFQLpQg" outgoing="_AUjfScxYXRouSgpRTp1i0g"/>
+          <node xmi:type="uml:ActivityFinalNode" xmi:id="_85h6-6cH2naMSN3WA9QGiQ" incoming="_G4d4lh45vhqwZWuW82uovA"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Activity" xmi:id="_ISh6nkEcE1ygO7xAIOu2VA" name="BuyPhase">
+          <edge xmi:type="uml:ControlFlow" xmi:id="_TmUaoF3FuZ37Wzg00JGOdQ" target="_rGYPZ9wMfe0jXhlH2HZSuQ" source="_A1HHWR03-YKfN9uQJoCrqw"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_FqmIICCDyIq0-mynA-ZWRQ" target="_LLOVtTfGzV5CWEIjrYxMDg" source="_rGYPZ9wMfe0jXhlH2HZSuQ"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_NFoJfFEX64UcXszPV16vVg" target="_uve-1L78OHZVLkjcKwlG3A" source="_LLOVtTfGzV5CWEIjrYxMDg"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_udeDFqoQqLo7SzKjUq_2MQ" target="_akn4LrbmD99KfrMeUG1ZEg" source="_uve-1L78OHZVLkjcKwlG3A">
+            <guard xmi:type="uml:LiteralString" xmi:id="_KCeWcBK7q-9UNJcYTp8dUQ" value="yes"/>
+          </edge>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_kgHVFcLoC2ol42rBE1Awtg" target="_LLOVtTfGzV5CWEIjrYxMDg" source="_akn4LrbmD99KfrMeUG1ZEg"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_hs58Zothiw8OxWJBxCTc0w" target="_uLRX1smLPVYk7nbfrAQpQQ" source="_uve-1L78OHZVLkjcKwlG3A">
+            <guard xmi:type="uml:LiteralString" xmi:id="_FJPReIKQ8PTMZn6-pVFGWw" value="no"/>
+          </edge>
+          <node xmi:type="uml:InitialNode" xmi:id="_A1HHWR03-YKfN9uQJoCrqw" outgoing="_TmUaoF3FuZ37Wzg00JGOdQ"/>
+          <node xmi:type="uml:OpaqueAction" xmi:id="_rGYPZ9wMfe0jXhlH2HZSuQ" name="Play Treasure Cards" incoming="_TmUaoF3FuZ37Wzg00JGOdQ" outgoing="_FqmIICCDyIq0-mynA-ZWRQ"/>
+          <node xmi:type="uml:MergeNode" xmi:id="_LLOVtTfGzV5CWEIjrYxMDg" incoming="_FqmIICCDyIq0-mynA-ZWRQ _kgHVFcLoC2ol42rBE1Awtg" outgoing="_NFoJfFEX64UcXszPV16vVg"/>
+          <node xmi:type="uml:DecisionNode" xmi:id="_uve-1L78OHZVLkjcKwlG3A" name="Buys remaining and can afford a Supply card?" incoming="_NFoJfFEX64UcXszPV16vVg" outgoing="_udeDFqoQqLo7SzKjUq_2MQ _hs58Zothiw8OxWJBxCTc0w"/>
+          <node xmi:type="uml:OpaqueAction" xmi:id="_akn4LrbmD99KfrMeUG1ZEg" name="Buy Card from Supply" incoming="_udeDFqoQqLo7SzKjUq_2MQ" outgoing="_kgHVFcLoC2ol42rBE1Awtg"/>
+          <node xmi:type="uml:ActivityFinalNode" xmi:id="_uLRX1smLPVYk7nbfrAQpQQ" incoming="_hs58Zothiw8OxWJBxCTc0w"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Activity" xmi:id="_6PZtcEtz-qZyG1favzPl-A" name="CleanupPhase">
+          <edge xmi:type="uml:ControlFlow" xmi:id="_YGou_pu-dfv9HHctocBhQQ" target="_67Pi_WaimBg2hGQ3bR5iWQ" source="_3_dF-ulO0Zki2P9tQnhCoQ"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_xFMGZa-ya2v_nitq5pwgnQ" target="_1QAWW-DIUR6G8qUs8qClWg" source="_67Pi_WaimBg2hGQ3bR5iWQ"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_XMJwvsUu363EOPxMxTOVyQ" target="_7h_YqjVYRGe8zEhp4ll1CA" source="_1QAWW-DIUR6G8qUs8qClWg"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_lwluo11Tzm7YzrYqpE9c6g" target="_luwp9Ik0wZh2tq39OAtSvQ" source="_7h_YqjVYRGe8zEhp4ll1CA"/>
+          <node xmi:type="uml:InitialNode" xmi:id="_3_dF-ulO0Zki2P9tQnhCoQ" outgoing="_YGou_pu-dfv9HHctocBhQQ"/>
+          <node xmi:type="uml:OpaqueAction" xmi:id="_67Pi_WaimBg2hGQ3bR5iWQ" name="Discard Hand and Play Area into Discard Pile" incoming="_YGou_pu-dfv9HHctocBhQQ" outgoing="_xFMGZa-ya2v_nitq5pwgnQ"/>
+          <node xmi:type="uml:OpaqueAction" xmi:id="_1QAWW-DIUR6G8qUs8qClWg" name="Draw New Hand (5 cards)" incoming="_xFMGZa-ya2v_nitq5pwgnQ" outgoing="_XMJwvsUu363EOPxMxTOVyQ"/>
+          <node xmi:type="uml:OpaqueAction" xmi:id="_7h_YqjVYRGe8zEhp4ll1CA" name="Reset Actions, Buys, Coins to base values" incoming="_XMJwvsUu363EOPxMxTOVyQ" outgoing="_lwluo11Tzm7YzrYqpE9c6g"/>
+          <node xmi:type="uml:ActivityFinalNode" xmi:id="_luwp9Ik0wZh2tq39OAtSvQ" incoming="_lwluo11Tzm7YzrYqpE9c6g"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Activity" xmi:id="_RX8nRK3UF7R2AA6lIGESFw" name="PlayerTurn">
+          <edge xmi:type="uml:ControlFlow" xmi:id="_nStM2Fhyecwbl2wnxr-4mA" target="_jgyGqcEIjonso5nKHQkfDQ" source="_tQVoP-PKTHwxbVawXinYPg"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_3GAgNKNKAOzxiE-mt-V3vg" target="_l9goQlczw-SjxrF7_do-5w" source="_jgyGqcEIjonso5nKHQkfDQ"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_OpDR2ty6SdaCGdD9u6HNYg" target="_HoIOMxG0sFNHTGfkPzrG3g" source="_l9goQlczw-SjxrF7_do-5w"/>
+          <edge xmi:type="uml:ControlFlow" xmi:id="_KLxbAip0nqM172aDs-k9_Q" target="_-hj-ZdqLOu1hApvOj_gn7A" source="_HoIOMxG0sFNHTGfkPzrG3g"/>
+          <node xmi:type="uml:InitialNode" xmi:id="_tQVoP-PKTHwxbVawXinYPg" outgoing="_nStM2Fhyecwbl2wnxr-4mA"/>
+          <node xmi:type="uml:CallBehaviorAction" xmi:id="_jgyGqcEIjonso5nKHQkfDQ" name="Action Phase" incoming="_nStM2Fhyecwbl2wnxr-4mA" outgoing="_3GAgNKNKAOzxiE-mt-V3vg" behavior="_0jncHm4zeSb8WS4cNDg5Nw"/>
+          <node xmi:type="uml:CallBehaviorAction" xmi:id="_l9goQlczw-SjxrF7_do-5w" name="Buy Phase" incoming="_3GAgNKNKAOzxiE-mt-V3vg" outgoing="_OpDR2ty6SdaCGdD9u6HNYg" behavior="_ISh6nkEcE1ygO7xAIOu2VA"/>
+          <node xmi:type="uml:CallBehaviorAction" xmi:id="_HoIOMxG0sFNHTGfkPzrG3g" name="Cleanup Phase" incoming="_OpDR2ty6SdaCGdD9u6HNYg" outgoing="_KLxbAip0nqM172aDs-k9_Q" behavior="_6PZtcEtz-qZyG1favzPl-A"/>
+          <node xmi:type="uml:ActivityFinalNode" xmi:id="_-hj-ZdqLOu1hApvOj_gn7A" incoming="_KLxbAip0nqM172aDs-k9_Q"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:StateMachine" xmi:id="_kSzqrXHUFmeJW65nBP9QzA" name="CardLifecycle">
+          <region xmi:type="uml:Region" xmi:id="_u3DbMV-zlQkn13uTNgAH9g" name="CardLifecycle Region">
+            <transition xmi:type="uml:Transition" xmi:id="_91NDVqhR6C02L8NxxUUveQ" name="Added to game" source="_6IkrIKDZbWHKh9m45JCpSg" target="__7nVcOzXCQnbxq7NopufJA"/>
+            <transition xmi:type="uml:Transition" xmi:id="_TgMJjIiEslmTtbQwy67huQ" name="Gained (bought or otherwise acquired)" source="__7nVcOzXCQnbxq7NopufJA" target="_EEBInW4M-Z91xltxOT4Avw"/>
+            <transition xmi:type="uml:Transition" xmi:id="_HUrVLCU3Z03hVpttgEQRAw" name="Shuffled into new deck" source="_EEBInW4M-Z91xltxOT4Avw" target="_Sbjawoy-3DvpZnzXf8gJeA"/>
+            <transition xmi:type="uml:Transition" xmi:id="_4G3Zy--9JYj5Jd9Y_8er8g" name="Drawn" source="_Sbjawoy-3DvpZnzXf8gJeA" target="_hQVliUzLSkztGLxmTdE3bQ"/>
+            <transition xmi:type="uml:Transition" xmi:id="_EpEcri-CTEJAgSUAYbMigw" name="Played" source="_hQVliUzLSkztGLxmTdE3bQ" target="_4BkBLPI68NSGM8-jWTTYTw"/>
+            <transition xmi:type="uml:Transition" xmi:id="_QEvt-rXmix_kZnbWjIZPAw" name="Discarded" source="_hQVliUzLSkztGLxmTdE3bQ" target="_EEBInW4M-Z91xltxOT4Avw"/>
+            <transition xmi:type="uml:Transition" xmi:id="_mbW9CSlLMfO8_1hiC8YUPA" name="Cleaned up at end of turn" source="_4BkBLPI68NSGM8-jWTTYTw" target="_EEBInW4M-Z91xltxOT4Avw"/>
+            <transition xmi:type="uml:Transition" xmi:id="_tToE5mRW3wAR1FnTktwUgQ" name="Trashed" source="_hQVliUzLSkztGLxmTdE3bQ" target="_9yPyunPvR8TZD1b6iuwyoQ"/>
+            <transition xmi:type="uml:Transition" xmi:id="_Ieq_RsxQmhJ9JRAARXb20Q" name="Trashed" source="_4BkBLPI68NSGM8-jWTTYTw" target="_9yPyunPvR8TZD1b6iuwyoQ"/>
+            <subvertex xmi:type="uml:Pseudostate" xmi:id="_6IkrIKDZbWHKh9m45JCpSg"/>
+            <subvertex xmi:type="uml:State" xmi:id="__7nVcOzXCQnbxq7NopufJA" name="InSupply"/>
+            <subvertex xmi:type="uml:State" xmi:id="_EEBInW4M-Z91xltxOT4Avw" name="InDiscardPile"/>
+            <subvertex xmi:type="uml:State" xmi:id="_Sbjawoy-3DvpZnzXf8gJeA" name="InDeck"/>
+            <subvertex xmi:type="uml:State" xmi:id="_hQVliUzLSkztGLxmTdE3bQ" name="InHand"/>
+            <subvertex xmi:type="uml:State" xmi:id="_4BkBLPI68NSGM8-jWTTYTw" name="InPlayArea"/>
+            <subvertex xmi:type="uml:State" xmi:id="_9yPyunPvR8TZD1b6iuwyoQ" name="InTrash"/>
+          </region>
+        </packagedElement>
       </packagedElement>
     </packagedElement>
-    <packagedElement xmi:type="uml:Package" xmi:id="_2OMznu2wureO3HLNUg6TcQ" name="Behavior">
-      <packagedElement xmi:type="uml:Activity" xmi:id="_0jncHm4zeSb8WS4cNDg5Nw" name="ActionPhase">
-        <edge xmi:type="uml:ControlFlow" xmi:id="_9DWwg5bz8qywEW_He6sp8g" target="_M0ALBzi_Gezz5-Cy1wO9CA" source="_WgeFuc9yKkn3oP0g36-I4g"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_4iVqlAZem22XCF2ikUSD9Q" target="_MbUKwHk3rN3KlFsXt3OhZw" source="_M0ALBzi_Gezz5-Cy1wO9CA"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_TVzjRSqX3Yky3T2wFQLpQg" target="_W-CpjYM0Zx2c9hB--a92Iw" source="_MbUKwHk3rN3KlFsXt3OhZw">
-          <guard xmi:type="uml:LiteralString" xmi:id="_17ye3MXdDed4UEGQbJ7yTg" value="yes"/>
-        </edge>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_AUjfScxYXRouSgpRTp1i0g" target="_M0ALBzi_Gezz5-Cy1wO9CA" source="_W-CpjYM0Zx2c9hB--a92Iw"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_G4d4lh45vhqwZWuW82uovA" target="_85h6-6cH2naMSN3WA9QGiQ" source="_MbUKwHk3rN3KlFsXt3OhZw">
-          <guard xmi:type="uml:LiteralString" xmi:id="_kTYTwqOhKwA-pqckMyeJHg" value="no"/>
-        </edge>
-        <node xmi:type="uml:InitialNode" xmi:id="_WgeFuc9yKkn3oP0g36-I4g" outgoing="_9DWwg5bz8qywEW_He6sp8g"/>
-        <node xmi:type="uml:MergeNode" xmi:id="_M0ALBzi_Gezz5-Cy1wO9CA" incoming="_9DWwg5bz8qywEW_He6sp8g _AUjfScxYXRouSgpRTp1i0g" outgoing="_4iVqlAZem22XCF2ikUSD9Q"/>
-        <node xmi:type="uml:DecisionNode" xmi:id="_MbUKwHk3rN3KlFsXt3OhZw" name="Actions remaining and playable Action card in hand?" incoming="_4iVqlAZem22XCF2ikUSD9Q" outgoing="_TVzjRSqX3Yky3T2wFQLpQg _G4d4lh45vhqwZWuW82uovA"/>
-        <node xmi:type="uml:OpaqueAction" xmi:id="_W-CpjYM0Zx2c9hB--a92Iw" name="Play Action Card" incoming="_TVzjRSqX3Yky3T2wFQLpQg" outgoing="_AUjfScxYXRouSgpRTp1i0g"/>
-        <node xmi:type="uml:ActivityFinalNode" xmi:id="_85h6-6cH2naMSN3WA9QGiQ" incoming="_G4d4lh45vhqwZWuW82uovA"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Activity" xmi:id="_ISh6nkEcE1ygO7xAIOu2VA" name="BuyPhase">
-        <edge xmi:type="uml:ControlFlow" xmi:id="_TmUaoF3FuZ37Wzg00JGOdQ" target="_rGYPZ9wMfe0jXhlH2HZSuQ" source="_A1HHWR03-YKfN9uQJoCrqw"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_FqmIICCDyIq0-mynA-ZWRQ" target="_LLOVtTfGzV5CWEIjrYxMDg" source="_rGYPZ9wMfe0jXhlH2HZSuQ"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_NFoJfFEX64UcXszPV16vVg" target="_uve-1L78OHZVLkjcKwlG3A" source="_LLOVtTfGzV5CWEIjrYxMDg"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_udeDFqoQqLo7SzKjUq_2MQ" target="_akn4LrbmD99KfrMeUG1ZEg" source="_uve-1L78OHZVLkjcKwlG3A">
-          <guard xmi:type="uml:LiteralString" xmi:id="_KCeWcBK7q-9UNJcYTp8dUQ" value="yes"/>
-        </edge>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_kgHVFcLoC2ol42rBE1Awtg" target="_LLOVtTfGzV5CWEIjrYxMDg" source="_akn4LrbmD99KfrMeUG1ZEg"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_hs58Zothiw8OxWJBxCTc0w" target="_uLRX1smLPVYk7nbfrAQpQQ" source="_uve-1L78OHZVLkjcKwlG3A">
-          <guard xmi:type="uml:LiteralString" xmi:id="_FJPReIKQ8PTMZn6-pVFGWw" value="no"/>
-        </edge>
-        <node xmi:type="uml:InitialNode" xmi:id="_A1HHWR03-YKfN9uQJoCrqw" outgoing="_TmUaoF3FuZ37Wzg00JGOdQ"/>
-        <node xmi:type="uml:OpaqueAction" xmi:id="_rGYPZ9wMfe0jXhlH2HZSuQ" name="Play Treasure Cards" incoming="_TmUaoF3FuZ37Wzg00JGOdQ" outgoing="_FqmIICCDyIq0-mynA-ZWRQ"/>
-        <node xmi:type="uml:MergeNode" xmi:id="_LLOVtTfGzV5CWEIjrYxMDg" incoming="_FqmIICCDyIq0-mynA-ZWRQ _kgHVFcLoC2ol42rBE1Awtg" outgoing="_NFoJfFEX64UcXszPV16vVg"/>
-        <node xmi:type="uml:DecisionNode" xmi:id="_uve-1L78OHZVLkjcKwlG3A" name="Buys remaining and can afford a Supply card?" incoming="_NFoJfFEX64UcXszPV16vVg" outgoing="_udeDFqoQqLo7SzKjUq_2MQ _hs58Zothiw8OxWJBxCTc0w"/>
-        <node xmi:type="uml:OpaqueAction" xmi:id="_akn4LrbmD99KfrMeUG1ZEg" name="Buy Card from Supply" incoming="_udeDFqoQqLo7SzKjUq_2MQ" outgoing="_kgHVFcLoC2ol42rBE1Awtg"/>
-        <node xmi:type="uml:ActivityFinalNode" xmi:id="_uLRX1smLPVYk7nbfrAQpQQ" incoming="_hs58Zothiw8OxWJBxCTc0w"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Activity" xmi:id="_6PZtcEtz-qZyG1favzPl-A" name="CleanupPhase">
-        <edge xmi:type="uml:ControlFlow" xmi:id="_YGou_pu-dfv9HHctocBhQQ" target="_67Pi_WaimBg2hGQ3bR5iWQ" source="_3_dF-ulO0Zki2P9tQnhCoQ"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_xFMGZa-ya2v_nitq5pwgnQ" target="_1QAWW-DIUR6G8qUs8qClWg" source="_67Pi_WaimBg2hGQ3bR5iWQ"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_XMJwvsUu363EOPxMxTOVyQ" target="_7h_YqjVYRGe8zEhp4ll1CA" source="_1QAWW-DIUR6G8qUs8qClWg"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_lwluo11Tzm7YzrYqpE9c6g" target="_luwp9Ik0wZh2tq39OAtSvQ" source="_7h_YqjVYRGe8zEhp4ll1CA"/>
-        <node xmi:type="uml:InitialNode" xmi:id="_3_dF-ulO0Zki2P9tQnhCoQ" outgoing="_YGou_pu-dfv9HHctocBhQQ"/>
-        <node xmi:type="uml:OpaqueAction" xmi:id="_67Pi_WaimBg2hGQ3bR5iWQ" name="Discard Hand and Play Area into Discard Pile" incoming="_YGou_pu-dfv9HHctocBhQQ" outgoing="_xFMGZa-ya2v_nitq5pwgnQ"/>
-        <node xmi:type="uml:OpaqueAction" xmi:id="_1QAWW-DIUR6G8qUs8qClWg" name="Draw New Hand (5 cards)" incoming="_xFMGZa-ya2v_nitq5pwgnQ" outgoing="_XMJwvsUu363EOPxMxTOVyQ"/>
-        <node xmi:type="uml:OpaqueAction" xmi:id="_7h_YqjVYRGe8zEhp4ll1CA" name="Reset Actions, Buys, Coins to base values" incoming="_XMJwvsUu363EOPxMxTOVyQ" outgoing="_lwluo11Tzm7YzrYqpE9c6g"/>
-        <node xmi:type="uml:ActivityFinalNode" xmi:id="_luwp9Ik0wZh2tq39OAtSvQ" incoming="_lwluo11Tzm7YzrYqpE9c6g"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:Activity" xmi:id="_RX8nRK3UF7R2AA6lIGESFw" name="PlayerTurn">
-        <edge xmi:type="uml:ControlFlow" xmi:id="_nStM2Fhyecwbl2wnxr-4mA" target="_jgyGqcEIjonso5nKHQkfDQ" source="_tQVoP-PKTHwxbVawXinYPg"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_3GAgNKNKAOzxiE-mt-V3vg" target="_l9goQlczw-SjxrF7_do-5w" source="_jgyGqcEIjonso5nKHQkfDQ"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_OpDR2ty6SdaCGdD9u6HNYg" target="_HoIOMxG0sFNHTGfkPzrG3g" source="_l9goQlczw-SjxrF7_do-5w"/>
-        <edge xmi:type="uml:ControlFlow" xmi:id="_KLxbAip0nqM172aDs-k9_Q" target="_-hj-ZdqLOu1hApvOj_gn7A" source="_HoIOMxG0sFNHTGfkPzrG3g"/>
-        <node xmi:type="uml:InitialNode" xmi:id="_tQVoP-PKTHwxbVawXinYPg" outgoing="_nStM2Fhyecwbl2wnxr-4mA"/>
-        <node xmi:type="uml:CallBehaviorAction" xmi:id="_jgyGqcEIjonso5nKHQkfDQ" name="Action Phase" incoming="_nStM2Fhyecwbl2wnxr-4mA" outgoing="_3GAgNKNKAOzxiE-mt-V3vg" behavior="_0jncHm4zeSb8WS4cNDg5Nw"/>
-        <node xmi:type="uml:CallBehaviorAction" xmi:id="_l9goQlczw-SjxrF7_do-5w" name="Buy Phase" incoming="_3GAgNKNKAOzxiE-mt-V3vg" outgoing="_OpDR2ty6SdaCGdD9u6HNYg" behavior="_ISh6nkEcE1ygO7xAIOu2VA"/>
-        <node xmi:type="uml:CallBehaviorAction" xmi:id="_HoIOMxG0sFNHTGfkPzrG3g" name="Cleanup Phase" incoming="_OpDR2ty6SdaCGdD9u6HNYg" outgoing="_KLxbAip0nqM172aDs-k9_Q" behavior="_6PZtcEtz-qZyG1favzPl-A"/>
-        <node xmi:type="uml:ActivityFinalNode" xmi:id="_-hj-ZdqLOu1hApvOj_gn7A" incoming="_KLxbAip0nqM172aDs-k9_Q"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:StateMachine" xmi:id="_kSzqrXHUFmeJW65nBP9QzA" name="CardLifecycle">
-        <region xmi:type="uml:Region" xmi:id="_u3DbMV-zlQkn13uTNgAH9g" name="CardLifecycle Region">
-          <transition xmi:type="uml:Transition" xmi:id="_91NDVqhR6C02L8NxxUUveQ" name="Added to game" source="_6IkrIKDZbWHKh9m45JCpSg" target="__7nVcOzXCQnbxq7NopufJA"/>
-          <transition xmi:type="uml:Transition" xmi:id="_TgMJjIiEslmTtbQwy67huQ" name="Gained (bought or otherwise acquired)" source="__7nVcOzXCQnbxq7NopufJA" target="_EEBInW4M-Z91xltxOT4Avw"/>
-          <transition xmi:type="uml:Transition" xmi:id="_HUrVLCU3Z03hVpttgEQRAw" name="Shuffled into new deck" source="_EEBInW4M-Z91xltxOT4Avw" target="_Sbjawoy-3DvpZnzXf8gJeA"/>
-          <transition xmi:type="uml:Transition" xmi:id="_4G3Zy--9JYj5Jd9Y_8er8g" name="Drawn" source="_Sbjawoy-3DvpZnzXf8gJeA" target="_hQVliUzLSkztGLxmTdE3bQ"/>
-          <transition xmi:type="uml:Transition" xmi:id="_EpEcri-CTEJAgSUAYbMigw" name="Played" source="_hQVliUzLSkztGLxmTdE3bQ" target="_4BkBLPI68NSGM8-jWTTYTw"/>
-          <transition xmi:type="uml:Transition" xmi:id="_QEvt-rXmix_kZnbWjIZPAw" name="Discarded" source="_hQVliUzLSkztGLxmTdE3bQ" target="_EEBInW4M-Z91xltxOT4Avw"/>
-          <transition xmi:type="uml:Transition" xmi:id="_mbW9CSlLMfO8_1hiC8YUPA" name="Cleaned up at end of turn" source="_4BkBLPI68NSGM8-jWTTYTw" target="_EEBInW4M-Z91xltxOT4Avw"/>
-          <transition xmi:type="uml:Transition" xmi:id="_tToE5mRW3wAR1FnTktwUgQ" name="Trashed" source="_hQVliUzLSkztGLxmTdE3bQ" target="_9yPyunPvR8TZD1b6iuwyoQ"/>
-          <transition xmi:type="uml:Transition" xmi:id="_Ieq_RsxQmhJ9JRAARXb20Q" name="Trashed" source="_4BkBLPI68NSGM8-jWTTYTw" target="_9yPyunPvR8TZD1b6iuwyoQ"/>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_6IkrIKDZbWHKh9m45JCpSg"/>
-          <subvertex xmi:type="uml:State" xmi:id="__7nVcOzXCQnbxq7NopufJA" name="InSupply"/>
-          <subvertex xmi:type="uml:State" xmi:id="_EEBInW4M-Z91xltxOT4Avw" name="InDiscardPile"/>
-          <subvertex xmi:type="uml:State" xmi:id="_Sbjawoy-3DvpZnzXf8gJeA" name="InDeck"/>
-          <subvertex xmi:type="uml:State" xmi:id="_hQVliUzLSkztGLxmTdE3bQ" name="InHand"/>
-          <subvertex xmi:type="uml:State" xmi:id="_4BkBLPI68NSGM8-jWTTYTw" name="InPlayArea"/>
-          <subvertex xmi:type="uml:State" xmi:id="_9yPyunPvR8TZD1b6iuwyoQ" name="InTrash"/>
-        </region>
-      </packagedElement>
-    </packagedElement>
-  </packagedElement>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FQjPMJxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FQjPMZxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#/"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR4r8JxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR5TAJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//activities"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Activities"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR56EJxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR6hIJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//allocations"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Allocations"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR6hIZxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR6hIpxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//blocks"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Blocks"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR6hI5xYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR6hJJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//constraintblocks"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_ConstraintBlocks"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR7IMJxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR7IMZxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//deprecatedelements"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_DeprecatedElements"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR7IMpxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR7vQJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//modelelements"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_ModelElements"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR7vQZxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR7vQpxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//portsandflows"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Ports_u0026Flows"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR8WUJxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR8WUZxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//requirements"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Requirements"/>
-  </profileApplication>
-  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR8WUpxYEfGOPOoE5BT8MQ">
-    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR89YJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/uml2/5.0.0/UML/Profile/Standard#/"/>
-    </eAnnotations>
-    <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_PROFILES/Standard.profile.uml#_0"/>
-  </profileApplication>
-  <Blocks:Block xmi:id="_2iolTU7IPA8nV2ogQSVV1w" base_Class="_RUuVfBSdZzB6WO5g4SKf1Q"/>
-  <Blocks:Block xmi:id="_V1WwyPTJpc9Mo7xokM4yFg" base_Class="_v2r_z3vMRwYxbZeNt9ZZew"/>
-  <Blocks:Block xmi:id="_vi13oF4RRaO2UhIEvL9zDw" base_Class="_Fynj5aSoWLHppjotMxbJow"/>
-  <Blocks:Block xmi:id="_dG5YNsv3eJQCLon5pS95oA" base_Class="_cWuTLvIrVD4DYlBeGAVTQg"/>
-  <Blocks:Block xmi:id="_FQGiUHajf1BPaFwV7LanpQ" base_Class="_s12wjtrKijp5JJZYh0SxaQ"/>
-  <Blocks:Block xmi:id="_rEx5TobWnHXrNKy5_bi1_Q" base_Class="_GUZ3ZTG7vVXP0BOD63cd7Q"/>
-  <Blocks:Block xmi:id="_1ICGiHYw6kTw8isDdIvCOA" base_Class="_ahb-e1fIB40_5W24NayBoA"/>
-  <Blocks:Block xmi:id="_krftu2onvNjPam_vsB1tfA" base_Class="_Z9xafxONEplNp9awDSbIww"/>
-  <Blocks:Block xmi:id="_tcQ2NqU9X24enWVvF03s_Q" base_Class="_b5KMSunHdn9OK3mXn2JKZg"/>
-  <Blocks:Block xmi:id="_WUu1nWxHMxlhQn3gIm-imA" base_Class="_djIVjnlCztUpPVVgfj8sHQ"/>
-  <Blocks:Block xmi:id="_r1Jdd2AT-m8BIIXRY5r9TA" base_Class="_DbQhCcuWNPMEvA06MBVNqg"/>
-  <Blocks:Block xmi:id="_uegc_3Y2XSYUSkmVfsE9MA" base_Class="_O1jQtW8edQ3_lkcl7ldbzw"/>
-  <Blocks:Block xmi:id="_zztBW35uO241Z5z8ZfbLdA" base_Class="_fafwyzeBq2t5E502cWikzQ"/>
-</uml:Model>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FQjPMJxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FQjPMZxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR4r8JxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR5TAJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//activities"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Activities"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR56EJxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR6hIJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//allocations"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Allocations"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR6hIZxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR6hIpxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//blocks"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Blocks"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR6hI5xYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR6hJJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//constraintblocks"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_ConstraintBlocks"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR7IMJxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR7IMZxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//deprecatedelements"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_DeprecatedElements"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR7IMpxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR7vQJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//modelelements"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_ModelElements"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR7vQZxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR7vQpxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//portsandflows"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Ports_u0026Flows"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR8WUJxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR8WUZxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/sysml/1.6/SysML#//requirements"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://SysML16_PROFILES/SysML.profile.uml#SysML.package_packagedElement_Requirements"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_FR8WUpxYEfGOPOoE5BT8MQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FR89YJxYEfGOPOoE5BT8MQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/uml2/5.0.0/UML/Profile/Standard#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_PROFILES/Standard.profile.uml#_0"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_A-XnoJ1xEfGUdstlaDssZQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_A-Y1wJ1xEfGUdstlaDssZQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/Codegen/1#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://Codegen_PROFILES/Codegen.profile.uml#_fPDsIBa-EearhdjjJ6cVzQ"/>
+    </profileApplication>
+    <Blocks:Block xmi:id="_2iolTU7IPA8nV2ogQSVV1w" base_Class="_RUuVfBSdZzB6WO5g4SKf1Q"/>
+    <Blocks:Block xmi:id="_V1WwyPTJpc9Mo7xokM4yFg" base_Class="_v2r_z3vMRwYxbZeNt9ZZew"/>
+    <Blocks:Block xmi:id="_vi13oF4RRaO2UhIEvL9zDw" base_Class="_Fynj5aSoWLHppjotMxbJow"/>
+    <Blocks:Block xmi:id="_dG5YNsv3eJQCLon5pS95oA" base_Class="_cWuTLvIrVD4DYlBeGAVTQg"/>
+    <Blocks:Block xmi:id="_FQGiUHajf1BPaFwV7LanpQ" base_Class="_s12wjtrKijp5JJZYh0SxaQ"/>
+    <Blocks:Block xmi:id="_rEx5TobWnHXrNKy5_bi1_Q" base_Class="_GUZ3ZTG7vVXP0BOD63cd7Q"/>
+    <Blocks:Block xmi:id="_1ICGiHYw6kTw8isDdIvCOA" base_Class="_ahb-e1fIB40_5W24NayBoA"/>
+    <Blocks:Block xmi:id="_krftu2onvNjPam_vsB1tfA" base_Class="_Z9xafxONEplNp9awDSbIww"/>
+    <Blocks:Block xmi:id="_tcQ2NqU9X24enWVvF03s_Q" base_Class="_b5KMSunHdn9OK3mXn2JKZg"/>
+    <Blocks:Block xmi:id="_WUu1nWxHMxlhQn3gIm-imA" base_Class="_djIVjnlCztUpPVVgfj8sHQ"/>
+    <Blocks:Block xmi:id="_r1Jdd2AT-m8BIIXRY5r9TA" base_Class="_DbQhCcuWNPMEvA06MBVNqg"/>
+    <Blocks:Block xmi:id="_uegc_3Y2XSYUSkmVfsE9MA" base_Class="_O1jQtW8edQ3_lkcl7ldbzw"/>
+    <Blocks:Block xmi:id="_zztBW35uO241Z5z8ZfbLdA" base_Class="_fafwyzeBq2t5E502cWikzQ"/>
+  </uml:Model>
+  <Codegen:GeneratorHint xmi:id="_A-cgIJ1xEfGUdstlaDssZQ" base_Element="_FPuv0JxYEfGOPOoE5BT8MQ" generatorID="Simple Python">
+    <language xmi:type="Codegen:Language" href="pathmap://Codegen_PROFILES/languages.uml#_-KO24LevEeqRG-TdtCFO7g"/>
+  </Codegen:GeneratorHint>
+</xmi:XMI>
