@@ -14,6 +14,22 @@ CARD_DESCRIPTIONS = {
     "Militia": "+2 Coins, other players discard down to 3",
     "Mine": "Trash a Treasure, gain a Treasure costing up to 3 more (to hand)",
     "Remodel": "Trash a card, gain a card costing up to 2 more (to discard)",
+    "Poacher": "+1 Card, +1 Action, +1 Coin; discard 1 per empty Supply pile",
+    "Festival": "+2 Actions, +1 Buy, +2 Coins",
+    "Laboratory": "+2 Cards, +1 Action",
+    "Council Room": "+4 Cards, +1 Buy; each other player draws 1",
+    "Moneylender": "Trash a Copper from hand for +3 Coins",
+    "Chapel": "Trash up to 4 cards from hand",
+    "Artisan": "Gain a card costing up to 5 (to hand); put a card from hand onto deck",
+    "Library": "Draw until you have 7 cards in hand, may skip drawn Actions",
+    "Harbinger": "+1 Card, +1 Action; may put a card from discard onto deck",
+    "Vassal": "+2 Coins; discard top of deck, may play it if it's an Action",
+    "Sentry": "+1 Card, +1 Action; look at top 2, trash/discard/reorder them",
+    "Witch": "+2 Cards; each other player gains a Curse",
+    "Bureaucrat": "Gain a Silver to deck; each other player topdecks a Victory card",
+    "Bandit": "Gain a Gold; each other player trashes a revealed Treasure",
+    "Throne Room": "Play an Action card from hand twice",
+    "Gardens": "Victory card worth 1 VP per 10 cards you own, rounded down",
 }
 
 
