@@ -3,7 +3,7 @@ import questionary
 from dominion.structure.game import Game
 from dominion.cards.cardtypekind import CardTypeKind
 
-from demo import snapshot, report_diff, CARD_DESCRIPTIONS, play_turn
+from demo import snapshot, report_diff, CARD_DESCRIPTIONS, play_turn, pile_sort_key
 from dominion.rl.state import capture_initial_pile_counts
 
 STOP = object()
@@ -28,6 +28,14 @@ def human_choose_cards(candidates, prompt, context, count):
     choices = [card_choice(c) for c in candidates]
     chosen = questionary.checkbox(prompt, choices=choices).ask()
     return chosen or []
+
+
+def human_choose_action(candidates, prompt, context):
+    if not candidates:
+        return None
+    choices = [card_choice(c) for c in candidates]
+    choices.append(questionary.Choice("-- Skip --", value=None))
+    return questionary.select(prompt, choices=choices).ask()
 
 
 def human_choose_pile(candidates, prompt, context):
@@ -69,8 +77,9 @@ def human_turn(p, idx, game):
         print(f"    Played {n_treasures} treasures. Coins: {p.coins}")
 
     while p.buys > 0:
-        affordable = [pile for pile in game.supply.piles
-                      if pile.count > 0 and pile.cardType.cost <= p.coins]
+        affordable = sorted((pile for pile in game.supply.piles
+                              if pile.count > 0 and pile.cardType.cost <= p.coins),
+                             key=pile_sort_key)
         if not affordable:
             print("    Nothing affordable.")
             break
@@ -81,6 +90,8 @@ def human_turn(p, idx, game):
             break
         p.buy_card(pile)
         print(f"    Bought {pile.cardType.name}. Coins left: {p.coins}, buys left: {p.buys}")
+        if CardTypeKind.Victory in pile.cardType.types or CardTypeKind.Curse in pile.cardType.types:
+            print(f"    Victory points: {p.calculate_score()}")
 
     # Cleanup phase
     p.end_turn()
@@ -127,6 +138,7 @@ def main():
 
     human.choose_cards_fn = human_choose_cards
     human.choose_pile_fn = human_choose_pile
+    human.choose_action_fn = human_choose_action
     ai.choose_cards_fn = ai.ai_choose_cards
     ai.choose_pile_fn = ai.ai_choose_pile
     ai.choose_action_fn = ai.ai_choose_action

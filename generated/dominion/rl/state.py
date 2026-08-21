@@ -67,6 +67,7 @@ class PlayerState:
 class KingdomContext:
     has_growth_card: bool
     has_attack_cards: bool
+    has_defense_card: bool
 
 
 def owned_cards(player):
@@ -77,7 +78,8 @@ def owned_cards(player):
 def analyze_kingdom(supply):
     has_growth = any(pile.cardType.name in COMPUTED_VALUE_VICTORY_CARDS for pile in supply.piles)
     has_attack = any(CardTypeKind.Attack in pile.cardType.types for pile in supply.piles)
-    return KingdomContext(has_growth_card=has_growth, has_attack_cards=has_attack)
+    has_defense = any(CardTypeKind.Reaction in pile.cardType.types for pile in supply.piles)
+    return KingdomContext(has_growth_card=has_growth, has_attack_cards=has_attack, has_defense_card=has_defense)
 
 
 def _simulate_one_turn(hand, deck_pool):
@@ -268,7 +270,8 @@ def compute_current_priority(deck_state, turns_remaining, kingdom):
         return Priority.VPs
     if kingdom.has_growth_card and deck_state.gain_potential > GROWTH_GAIN_THRESHOLD:
         return Priority.Growth
-    if kingdom.has_attack_cards and deck_state.defense_density < DEFENSE_DENSITY_THRESHOLD:
+    if (kingdom.has_attack_cards and kingdom.has_defense_card
+            and deck_state.defense_density < DEFENSE_DENSITY_THRESHOLD):
         return Priority.Defense
     if deck_state.actions_per_turn <= ACTIONS_STRANDED_THRESHOLD:
         return Priority.Actions

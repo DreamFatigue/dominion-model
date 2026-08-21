@@ -5,6 +5,7 @@ from ..zones.playarea import PlayArea
 from ..cards.card import Card
 from .supplypile import SupplyPile
 from ..cards.cardtypekind import CardTypeKind
+from ..cards.descriptions import CARD_DESCRIPTIONS
 
 class Player:
 
@@ -14,7 +15,6 @@ class Player:
 		self.buys: int = 0
 		self.coins: int = 0
 		self.silverPlayedThisTurn: bool = False
-		self.declineMoatReveal: bool = False
 		self.current_priority : None = None
 		self.deck = Deck()
 		self.hand = Hand()
@@ -55,6 +55,10 @@ class Player:
 		from ..rl.state import Priority
 		priority = self.current_priority
 		
+		if context == "reveal_moat":
+			# Revealing Moat is never a bad trade -- it's free and fully
+			# blocks the attack -- so the heuristic AI always takes it.
+			return list(candidates)
 		if context == "cellar_discard":
 			return [c for c in candidates if CardTypeKind.Victory in c.types or CardTypeKind.Curse in c.types]
 		if context in ("mine_trash", "remodel_trash"):
@@ -157,6 +161,21 @@ class Player:
 				revealed.append(card)
 		return revealed
 
+	def _offer_moat_block(self, other, game):
+		"""Give the attacked player (human or AI) a real chance to respond
+		to an attack, instead of Moat silently auto-blocking it. Returns
+		True if the attack was blocked."""
+		moats = [c for c in other.hand.cards if c.name == "Moat"]
+		if not moats:
+			return False
+		revealed = other.choose_cards_fn(moats, "An attack is being played against you -- reveal Moat to block it?",
+		                                  "reveal_moat", -1)
+		if not revealed:
+			return False
+		idx = game.players.index(other)
+		print(f"      Player {idx} reveals Moat to block the attack!")
+		return True
+
 	def _resolve_action_effect(self, card, game):
 		"""Just the effect logic, no action-cost/hand-removal bookkeeping,
 		so Throne Room / Vassal can invoke a card's effect re-entrantly
@@ -197,7 +216,7 @@ class Player:
 			for other in game.players:
 				if other is self:
 					continue
-				if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+				if self._offer_moat_block(other, game):
 					continue
 				excess = len(other.hand.cards) - 3
 				if excess > 0:
@@ -324,13 +343,17 @@ class Player:
 			revealed = self._reveal_top(1)
 			if revealed:
 				top = revealed[0]
+				idx = game.players.index(self)
+				print(f"      Player {idx} reveals {top.name} off the Vassal.")
 				if CardTypeKind.Action in top.types:
 					chosen = self.choose_cards_fn([top], "Vassal: play the revealed Action card?", "vassal_play", -1)
 					if chosen and top in chosen:
 						self.playArea.cards.append(top)
+						print(f"      Player {idx} plays {top.name} (via Vassal): {CARD_DESCRIPTIONS.get(top.name, '')}")
 						self._resolve_action_effect(top, game)
 					else:
 						self.discardPile.cards.append(top)
+						print(f"      Player {idx} declines to play {top.name}; it's discarded.")
 				else:
 					self.discardPile.cards.append(top)
 		elif name == "Sentry":
@@ -371,7 +394,7 @@ class Player:
 			for other in game.players:
 				if other is self:
 					continue
-				if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+				if self._offer_moat_block(other, game):
 					continue
 				curse_piles = [pl for pl in game.supply.piles if pl.cardType.name == "Curse" and pl.count > 0]
 				if curse_piles:
@@ -385,7 +408,7 @@ class Player:
 			for other in game.players:
 				if other is self:
 					continue
-				if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+				if self._offer_moat_block(other, game):
 					continue
 				victory_cards = [c for c in other.hand.cards if CardTypeKind.Victory in c.types]
 				if victory_cards:
@@ -405,7 +428,7 @@ class Player:
 			for other in game.players:
 				if other is self:
 					continue
-				if any(c.name == "Moat" for c in other.hand.cards) and not other.declineMoatReveal:
+				if self._offer_moat_block(other, game):
 					continue
 				revealed = other._reveal_top(2)
 				eligible = [c for c in revealed if CardTypeKind.Treasure in c.types and c.name != "Copper"]
